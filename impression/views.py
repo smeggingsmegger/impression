@@ -1,24 +1,35 @@
 import sys
 from functools import wraps
 
-# from flask import flash, abort, Blueprint
-from flask import request, redirect, url_for, g, session, jsonify, render_template
+from flask import request, redirect, url_for, g, session, jsonify
+from flask.ext.themes2 import get_theme, render_theme_template
 
 from impression import app
 from impression.models import User, Setting, ApiKey
 
-# theme = Blueprint('theme', __name__, static_folder='themes/{}/static'.format('impression'))
-# app.register_blueprint(theme)
+def get_current_theme():
+    if g.theme is not None:
+        ident = g.theme
+    else:
+        ident = app.config.get('DEFAULT_THEME')
+    return get_theme(ident)
+
+def render(template, **context):
+    return render_theme_template(get_current_theme(), template, **context)
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html', user=g.user)
+    return render('index.html', user=g.user)
 
 @app.route('/admin', methods=['GET'])
 def admin():
     if not g.user and not g.admin:
         return redirect(url_for('login'))
-    return render_template('admin.html', user=g.user)
+    return render('admin.html', user=g.user)
+
+@app.route('/login', methods=['GET'])
+def login():
+    return render('login.html', user=g.user)
 
 def get_settings():
     '''
@@ -85,7 +96,7 @@ def admin_required(fnctn):
 def before_request():
     g.user = None
     g.admin = False
-    g.theme = "impression"
+    g.theme = 'impression'
 
     if 'admin' in session and session['admin']:
         g.admin = True

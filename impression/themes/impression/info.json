@@ -1,0 +1,9 @@
+{
+    "application": "impression",
+    "identifier": "impression",
+    "name": "Impression", 
+    "author": "Put Realauthor",
+    "license": "Apache 3",
+    "description": "Default theme",
+    "version": "1.0.0"
+}

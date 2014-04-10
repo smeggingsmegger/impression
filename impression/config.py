@@ -13,3 +13,4 @@ DEFAULT_MAIL_SENDER = 'admin@somehost.com'
 
 # Replace this with something real.
 SERVER_PATH = 'srv/www'
+DEFAULT_THEME = 'impression'
