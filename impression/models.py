@@ -15,7 +15,7 @@ class Log(OurMixin, db.Model):
     id = db.Column(db.VARCHAR(length=36), primary_key=True)
     action = db.Column(db.VARCHAR(length=5120))
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = db.relationship("User", backref="logs", cascade='delete')
+    user = db.relationship("User", cascade='delete')
 
 class Page(OurMixin, db.Model):
     __tablename__ = 'pages'
@@ -25,7 +25,7 @@ class Page(OurMixin, db.Model):
     url = db.Column(db.VARCHAR(length=256))
     content = db.Column(db.TEXT())
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = db.relationship("User", backref="logs", cascade='delete')
+    user = db.relationship("User", cascade='delete')
     published = db.Column(db.Boolean(), default=False, server_default='0')
 
 class Post(OurMixin, db.Model):
@@ -36,7 +36,7 @@ class Post(OurMixin, db.Model):
     url = db.Column(db.VARCHAR(length=256))
     content = db.Column(db.TEXT())
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = db.relationship("User", backref="logs", cascade='delete')
+    user = db.relationship("User", cascade='delete')
     published = db.Column(db.Boolean(), default=False, server_default='0')
 
 class Setting(OurMixin, db.Model):

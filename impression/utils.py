@@ -4,10 +4,10 @@ import hashlib
 import random
 
 def success(message):
-    return {'message': message, 'success': True}
+    return {'messages': [message], 'success': True}
 
 def failure(message):
-    return {'message': message, 'success': False}
+    return {'messages': [message], 'success': False}
 
 def generate_hash(length=64):
     return hashlib.sha224(str(random.getrandbits(256))).hexdigest()[0:length]
@@ -21,6 +21,16 @@ def srepr(arg):
     if is_sequence(arg):
         return '<' + ", ".join(srepr(x) for x in arg) + '>'
     return repr(arg)
+
+def place_call(number_or_numbers, message):
+    if not is_sequence(number_or_numbers):
+        number_loop = [number_or_numbers]
+    else:
+        number_loop = number_or_numbers
+
+    # client = TwilioRestClient(app.config['TWILIO_ACCOUNT_SID'], app.config['TWILIO_AUTH_TOKEN'])
+    for number in number_loop:
+        pass
 
 def camelcase_keys(data):
     """

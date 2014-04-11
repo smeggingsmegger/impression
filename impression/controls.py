@@ -30,16 +30,38 @@ def get_settings():
 
 def get_api_key(request):
     try:
-        api_key_id = request.POST['api_key']
+        api_key_id = request.POST.get('api_key')
     except AttributeError:
         api_key_id = request.form.get('api_key')
 
     api_key = ApiKey.filter_by(key=api_key_id).first()
     return api_key
 
+def get_payload(request):
+    try:
+        payload = request.POST
+    except AttributeError:
+        payload = request.form
+
+    return payload
+
 '''
 All decorators below. These handle things like authentication and more.
 '''
+def key_or_admin_required(fnctn):
+    @wraps(fnctn)
+    def decorated_function(*args, **kwargs):
+        api_key = get_api_key(request)
+        if not api_key and not g.user:
+            if not api_key:
+                print >> sys.stderr, "No valid API Key found."
+                return(jsonify({'success': False, 'messages': ['No valid API Key found.']}))
+            if not g.user.admin:
+                print >> sys.stderr, "No admin user found."
+                return redirect(url_for('login', next=request.url))
+        return fnctn(*args, **kwargs)
+    return decorated_function
+
 def key_or_login_required(fnctn):
     @wraps(fnctn)
     def decorated_function(*args, **kwargs):
