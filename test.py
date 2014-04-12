@@ -29,7 +29,7 @@ class impressionTestCase(unittest.TestCase):
         impression.db.drop_all(bind=[None])
         impression.db.create_all(bind=[None])
 
-        key = '{:02X}'.format(randrange(36**50))
+        key = '{0:02X}'.format(randrange(36**50))
         self.api_key = ApiKey(key=key, name='test-key')
         self.api_key.insert()
         safe_commit()
