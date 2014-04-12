@@ -5,7 +5,7 @@ python:
   # Taking this out because werkzeug is failing for now.
   # - "3.2"
 # command to install dependencies
-install: "pip install -r test_requirements.txt"
+install: "pip install unittest2"
 install: "pip install -r requirements.txt"
 # command to run tests
 script: nosetests test.py
