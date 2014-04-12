@@ -28,8 +28,27 @@ def create_user():
         user.password = payload.get('password')
         user.insert()
         safe_commit()
+        return_value['user_id'] = user.id
     else:
         return_value = failure('That user exists already.')
+
+    return jsonify(return_value)
+
+@app.route('/user_delete', methods=['POST'])
+@key_or_admin_required
+def delete_user():
+    return_value = success('The user was deleted.')
+    payload = get_payload(request)
+
+    if not g.user or g.user.id != payload.get('id'):
+        user = User.filter(User.id == payload.get('id')).first()
+        if user:
+            user.delete()
+            safe_commit()
+        else:
+            return_value = failure('That user does not exist.')
+    else:
+        return_value = failure('You cannot delete the current user.')
 
     return jsonify(return_value)
 
