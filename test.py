@@ -36,15 +36,10 @@ class impressionTestCase(unittest.TestCase):
 
         hashed_password = generate_password_hash('password-123')
 
-        # Create some users directly. We will test making them through the interface later.
+        # Create a user to update and delete later.
         self.user = User(name="Test User", email='test_user@impression.com', admin=True, openid='', password=hashed_password)
         self.user.insert()
 
-        user = User(name="Test3 User3", email='test_user3@impression.com', admin=True, openid='', password=hashed_password)
-        user.insert()
-
-        user = User(name="Mr. NoAdmin", email='no_admin@impression.com', admin=False, openid='', password=hashed_password)
-        user.insert()
         safe_commit()
 
     def tearDown(self):
