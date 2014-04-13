@@ -1,12 +1,17 @@
 #!/usr/bin/env python
 from random import randrange
+from sys import hexversion
 
 import impression
 from impression.mixin import safe_commit
 from impression.models import User, ApiKey
 
 import simplejson as json
-import unittest
+if hexversion < 0x02070000:
+    import unittest2 as unittest
+else:
+    import unittest
+
 import warnings
 
 from werkzeug.security import generate_password_hash, check_password_hash
