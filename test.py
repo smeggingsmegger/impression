@@ -1,20 +1,15 @@
 #!/usr/bin/env python
 from random import randrange
-from sys import hexversion
 
 import impression
 from impression.mixin import safe_commit
 from impression.models import User, ApiKey
 
 import simplejson as json
-if hexversion < 0x02070000:
-    import unittest2 as unittest
-else:
-    import unittest
-
+import unittest
 import warnings
 
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 warnings.simplefilter("ignore")
 
@@ -37,19 +32,20 @@ class impressionTestCase(unittest.TestCase):
         hashed_password = generate_password_hash('password-123')
 
         # Create some users directly. We will test making them through the interface later.
-        user = User(name="Test1 User1", email='test_user1@impression.com', admin=True, openid='', password=hashed_password)
-        user.insert()
+        self.user = User(name="Test User", email='test_user@impression.com', admin=True, openid='', password=hashed_password)
+        self.user.insert()
 
         user = User(name="Test3 User3", email='test_user3@impression.com', admin=True, openid='', password=hashed_password)
         user.insert()
 
         user = User(name="Mr. NoAdmin", email='no_admin@impression.com', admin=False, openid='', password=hashed_password)
         user.insert()
+        safe_commit()
 
     def tearDown(self):
         impression.db.drop_all(bind=[None])
 
-    def test_user_CRUD(self):
+    def test_user_create(self):
         api_key = self.api_key.key
 
         '''
@@ -87,12 +83,74 @@ class impressionTestCase(unittest.TestCase):
         self.assertIsNotNone(data['messages'])
         self.assertEquals(data['messages'][0], 'That user exists already.')
 
+        # Clean up!
+        user.delete()
+        safe_commit()
+
+    def test_user_retrieve(self):
+        api_key = self.api_key.key
+
+        '''
+        RETRIEVE
+        '''
+        post_data = {
+            'id': self.user.id
+        }
+        # Try to retrieve the user with no API key
+        rv = self.app.post('/user_retrieve', data=post_data, follow_redirects=True)
+        data = json.loads(rv.data)
+        self.assertFalse(data['success'])
+
+        # Retrieve the user. This should work fine.
+        post_data['api_key'] = api_key
+        rv = self.app.post('/user_retrieve', data=post_data, follow_redirects=True)
+        data = json.loads(rv.data)
+        self.assertTrue(data['success'])
+        self.assertTrue(data['user'])
+        self.assertEquals(data['user']['name'], 'Test User')
+
+    def test_user_update(self):
+        api_key = self.api_key.key
+
+        '''
+        UPDATE
+        '''
+        post_data = {
+            'name': 'New Person',
+            'email': 'newperson@impression.com',
+            'password': 'newperson123',
+            'id': self.user.id
+        }
+        # Try to update the user with no API key
+        rv = self.app.post('/user_update', data=post_data, follow_redirects=True)
+        data = json.loads(rv.data)
+        self.assertFalse(data['success'])
+
+        # update the user. This should work fine.
+        post_data['api_key'] = api_key
+        rv = self.app.post('/user_update', data=post_data, follow_redirects=True)
+        data = json.loads(rv.data)
+        self.assertTrue(data['success'])
+        self.assertTrue(data['user'])
+        self.assertIsNotNone(data['messages'])
+        self.assertEquals(data['messages'][0], 'The user was updated.')
+
+        # Make sure that we can grab the user from the DB.
+        user = User.get(self.user.id)
+        self.assertIsNotNone(user)
+        self.assertEquals(data['user']['name'], 'New Person')
+        self.assertEquals(user.name, 'New Person')
+        self.assertTrue(check_password_hash(user.password, 'newperson123'))
+
+    def test_user_delete(self):
+        api_key = self.api_key.key
+
         '''
         DELETE
         '''
         # Delete the user.
         post_data = {
-            'id': user_id,
+            'id': self.user.id
         }
         # Try to delete the user with no API key
         rv = self.app.post('/user_delete', data=post_data, follow_redirects=True)
@@ -104,7 +162,7 @@ class impressionTestCase(unittest.TestCase):
         rv = self.app.post('/user_delete', data=post_data, follow_redirects=True)
         data = json.loads(rv.data)
         self.assertTrue(data['success'])
-        user = User.get(user_id)
+        user = User.get(self.user.id)
         self.assertIsNone(user)
 
 if __name__ == '__main__':

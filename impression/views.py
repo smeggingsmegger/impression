@@ -7,6 +7,8 @@ from impression.mixin import safe_commit
 from impression.models import User
 from impression.utils import success, failure
 
+from werkzeug.security import generate_password_hash
+
 '''
 All routes go here.
 '''
@@ -22,15 +24,54 @@ def create_user():
     existing_user = User.filter(User.email == payload.get('email')).count()
 
     if not existing_user:
+        hashed_password = generate_password_hash(payload.get('password'))
         user = User()
         user.email = payload.get('email')
         user.name = payload.get('name')
-        user.password = payload.get('password')
+        user.password = hashed_password
         user.insert()
         safe_commit()
         return_value['user_id'] = user.id
     else:
         return_value = failure('That user exists already.')
+
+    return jsonify(return_value)
+
+@app.route('/user_retrieve', methods=['POST'])
+@key_or_admin_required
+def retrieve_user():
+    # TODO: Remove password, openid keys when sending it back.
+    return_value = success('The user was retrieved.')
+    payload = get_payload(request)
+    user = User.get(payload.get('id'))
+
+    if not user:
+        return_value = failure('That user does not exist.')
+    else:
+        return_value['user'] = user.to_dict(camel_case=True)
+
+    return jsonify(return_value)
+
+@app.route('/user_update', methods=['POST'])
+@key_or_admin_required
+def update_user():
+    return_value = success('The user was updated.')
+    payload = get_payload(request)
+    user = User.get(payload.get('id'))
+
+    if not user:
+        return_value = failure('That user does not exist.')
+    else:
+        if payload.get('password'):
+            hashed_password = generate_password_hash(payload.get('password'))
+        if payload.get('email'):
+            user.email = payload.get('email')
+        if payload.get('name'):
+            user.name = payload.get('name')
+
+        user.password = hashed_password
+        safe_commit()
+        return_value['user'] = user.to_dict(camel_case=True)
 
     return jsonify(return_value)
 
