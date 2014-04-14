@@ -4,7 +4,7 @@ from sys import hexversion
 
 import impression
 from impression.mixin import safe_commit
-from impression.models import User, ApiKey
+from impression.models import User, ApiKey, Content
 
 import simplejson as json
 if hexversion < 0x02070000:
@@ -45,6 +45,49 @@ class impressionTestCase(unittest.TestCase):
     def tearDown(self):
         impression.db.drop_all(bind=[None])
 
+    def test_content_create(self):
+        api_key = self.api_key.key
+
+        '''
+        CREATE
+        '''
+        post_data = {
+            'title': 'This is a test page',
+            'body': 'Blah blah blah',
+            'type': 'post',
+            'user_id': self.user.id
+        }
+        # Try to create the content with no API key
+        rv = self.app.post('/content_create', data=post_data, follow_redirects=True)
+        data = json.loads(rv.data)
+        self.assertFalse(data['success'])
+
+        # Create the content. This should work fine.
+        post_data['api_key'] = api_key
+        rv = self.app.post('/content_create', data=post_data, follow_redirects=True)
+        data = json.loads(rv.data)
+        self.assertTrue(data['success'])
+        self.assertTrue(data['id'])
+        self.assertIsNotNone(data['messages'])
+        self.assertEquals(data['messages'][0], 'The content was created.')
+        content_id = data['id']
+
+        # Make sure that we can grab the content from the DB.
+        content = Content.get(content_id)
+        self.assertIsNotNone(content)
+        self.assertEquals(content.title, post_data['title'])
+
+        # Try to create the same content again. This should fail.
+        rv = self.app.post('/content_create', data=post_data, follow_redirects=True)
+        data = json.loads(rv.data)
+        self.assertFalse(data['success'])
+        self.assertIsNotNone(data['messages'])
+        self.assertEquals(data['messages'][0], 'That post or page exists already.')
+
+        # Clean up!
+        content.delete()
+        safe_commit()
+
     def test_user_create(self):
         api_key = self.api_key.key
 
@@ -66,10 +109,10 @@ class impressionTestCase(unittest.TestCase):
         rv = self.app.post('/user_create', data=post_data, follow_redirects=True)
         data = json.loads(rv.data)
         self.assertTrue(data['success'])
-        self.assertTrue(data['user_id'])
+        self.assertTrue(data['id'])
         self.assertIsNotNone(data['messages'])
         self.assertEquals(data['messages'][0], 'The user was created.')
-        user_id = data['user_id']
+        user_id = data['id']
 
         # Make sure that we can grab the user from the DB.
         user = User.get(user_id)

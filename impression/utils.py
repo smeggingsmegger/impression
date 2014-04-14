@@ -3,11 +3,17 @@ import simplejson
 import hashlib
 import random
 
-def success(message):
-    return {'messages': [message], 'success': True}
+def success(message=None):
+    if message:
+        return {'messages': [message], 'success': True}
+    else:
+        return {'messages': [], 'success': True}
 
-def failure(message):
-    return {'messages': [message], 'success': False}
+def failure(message=None):
+    if message:
+        return {'messages': [message], 'success': False}
+    else:
+        return {'messages': [], 'success': False}
 
 def generate_hash(length=64):
     return hashlib.sha224(str(random.getrandbits(256))).hexdigest()[0:length]

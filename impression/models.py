@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 from impression import db
 from mixin import OurMixin
+from impression.utils import success #, failure
 
 class ApiKey(OurMixin, db.Model):
     __tablename__ = 'api_keys'
@@ -17,27 +18,29 @@ class Log(OurMixin, db.Model):
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship("User", cascade='delete')
 
-class Page(OurMixin, db.Model):
-    __tablename__ = 'pages'
-
-    id = db.Column(db.VARCHAR(length=36), primary_key=True)
-    name = db.Column(db.VARCHAR(length=512))
-    url = db.Column(db.VARCHAR(length=256))
-    content = db.Column(db.TEXT())
-    user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = db.relationship("User", cascade='delete')
-    published = db.Column(db.Boolean(), default=False, server_default='0')
-
-class Post(OurMixin, db.Model):
-    __tablename__ = 'posts'
+class Content(OurMixin, db.Model):
+    __tablename__ = 'content'
 
     id = db.Column(db.VARCHAR(length=36), primary_key=True)
     title = db.Column(db.VARCHAR(length=512))
+    type = db.Column(db.Enum('post', 'page'), nullable=False)
     url = db.Column(db.VARCHAR(length=256))
-    content = db.Column(db.TEXT())
+    body = db.Column(db.TEXT())
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship("User", cascade='delete')
     published = db.Column(db.Boolean(), default=False, server_default='0')
+
+    def validate(self):
+        return_value = success()
+        not_unique = Content.filter(Content.title == self.title).count()
+        if not_unique:
+            return_value['success'] = False
+            return_value['messages'].append('That post or page exists already.')
+        if not self.title:
+            return_value['success'] = False
+            return_value['messages'].append("A title is required to create a post or a page.")
+
+        return return_value
 
 class Setting(OurMixin, db.Model):
     __tablename__ = 'settings'
@@ -73,6 +76,18 @@ class User(OurMixin, db.Model):
 
     def __repr__(self):
         return "User: {} - {} - {}".format(self.id, self.name, self.email)
+
+    def validate(self):
+        return_value = success()
+        not_unique = User.filter(User.email == self.email).count()
+        if not_unique:
+            return_value['success'] = False
+            return_value['messages'].append("That user exists already.")
+        if not self.email:
+            return_value['success'] = False
+            return_value['messages'].append("An email address is required to create a user.")
+
+        return return_value
 
 class UserRole(OurMixin, db.Model):
     __tablename__ = 'user_roles'
