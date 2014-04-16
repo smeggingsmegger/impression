@@ -42,6 +42,21 @@ def create_content():
 
     return jsonify(return_value)
 
+@app.route('/content_retrieve', methods=['POST'])
+@key_or_admin_required
+def retrieve_content():
+    return_value = success('The content was retrieved.')
+    payload = get_payload(request)
+
+    content = Content.get(payload.get('id'))
+    if content:
+        return_value['content'] = content.to_dict(camel_case=True)
+    else:
+        return_value['success'] = False
+        return_value['messages'] = ['No content found with that ID.']
+
+    return jsonify(return_value)
+
 '''
 USER ROUTES
 '''

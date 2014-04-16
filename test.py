@@ -88,6 +88,67 @@ class impressionTestCase(unittest.TestCase):
         content.delete()
         safe_commit()
 
+        # Create the content. This should work fine.
+        post_data['api_key'] = api_key
+        post_data['type'] = 'page'
+        rv = self.app.post('/content_create', data=post_data, follow_redirects=True)
+        data = json.loads(rv.data)
+        self.assertTrue(data['success'])
+        self.assertTrue(data['id'])
+        self.assertIsNotNone(data['messages'])
+        self.assertEquals(data['messages'][0], 'The content was created.')
+        content_id = data['id']
+
+        # Make sure that we can grab the content from the DB.
+        content = Content.get(content_id)
+        self.assertIsNotNone(content)
+        self.assertEquals(content.title, post_data['title'])
+
+        # Try to create the same content again. This should fail.
+        rv = self.app.post('/content_create', data=post_data, follow_redirects=True)
+        data = json.loads(rv.data)
+        self.assertFalse(data['success'])
+        self.assertIsNotNone(data['messages'])
+        self.assertEquals(data['messages'][0], 'That post or page exists already.')
+
+        # Clean up!
+        content.delete()
+        safe_commit()
+
+    def test_content_retrieve(self):
+        api_key = self.api_key.key
+        user_id = self.user.id
+
+        '''
+        RETRIEVE
+        '''
+
+        # Create some content using the model directly...
+        content = Content(title="Test Content", type="post", body="blah blah blah", user_id=self.user.id)
+        content.insert()
+        safe_commit()
+
+        post_data = {
+            'id': content.id
+        }
+        # Try to retrieve the content with no API key
+        rv = self.app.post('/content_retrieve', data=post_data, follow_redirects=True)
+        data = json.loads(rv.data)
+        self.assertFalse(data['success'])
+
+        # retrieve the content. This should work fine.
+        post_data['api_key'] = api_key
+        rv = self.app.post('/content_retrieve', data=post_data, follow_redirects=True)
+        data = json.loads(rv.data)
+        self.assertTrue(data['success'])
+        self.assertTrue(data['content'])
+        self.assertIsNotNone(data['messages'])
+
+        content = Content.get(data['content']['id'])
+        self.assertEquals(content.title, data['content']['title'])
+        self.assertEquals(content.body, data['content']['body'])
+        self.assertEquals(user_id, data['content']['user_id'])
+
     def test_user_create(self):
         api_key = self.api_key.key
 

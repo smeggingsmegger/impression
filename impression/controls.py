@@ -1,4 +1,4 @@
-import sys
+# import sys
 from functools import wraps
 
 from impression import app
@@ -54,10 +54,10 @@ def key_or_admin_required(fnctn):
         api_key = get_api_key(request)
         if not api_key and not g.user:
             if not api_key:
-                print >> sys.stderr, "No valid API Key found."
+                # print >> sys.stderr, "No valid API Key found."
                 return(jsonify({'success': False, 'messages': ['No valid API Key found.']}))
             if not g.user.admin:
-                print >> sys.stderr, "No admin user found."
+                # print >> sys.stderr, "No admin user found."
                 return redirect(url_for('login', next=request.url))
         return fnctn(*args, **kwargs)
     return decorated_function
@@ -68,10 +68,10 @@ def key_or_login_required(fnctn):
         api_key = get_api_key(request)
         if not api_key or not g.user:
             if not api_key:
-                print >> sys.stderr, "No valid API Key found."
+                # print >> sys.stderr, "No valid API Key found."
                 return(jsonify({'error': 'No valid API Key found.'}))
             if not g.user:
-                print "No user found."
+                # print "No user found."
                 return redirect(url_for('login', next=request.url))
         return fnctn(*args, **kwargs)
     return decorated_function
@@ -81,7 +81,7 @@ def key_required(fnctn):
     def decorated_function(*args, **kwargs):
         api_key = get_api_key(request)
         if not api_key:
-            print >> sys.stderr, "No valid API Key found."
+            # print >> sys.stderr, "No valid API Key found."
             return(jsonify({'error': 'No valid API Key found.'}))
         return fnctn(*args, **kwargs)
     return decorated_function
@@ -90,7 +90,7 @@ def login_required(fnctn):
     @wraps(fnctn)
     def decorated_function(*args, **kwargs):
         if not g.user:
-            print "No user found."
+            # print "No user found."
             return redirect(url_for('login', next=request.url))
         return fnctn(*args, **kwargs)
     return decorated_function
