@@ -2,14 +2,15 @@ language: python
 python:
   - "2.6"
   - "2.7"
-  # - "pypy"
-  - "3.2"
-  - "3.3"
+  - "pypy"
+  # - "3.2"
+  # - "3.3"
 
 # command to install dependencies
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then pip install -r requirements.txt; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip install -r requirements3.txt; fi
+  - "pip install -r requirements.txt"
+  # - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then pip install -r requirements.txt; fi
+  # - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip install -r requirements3.txt; fi
   - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install --use-mirrors unittest2; fi
 
 # command to run tests
