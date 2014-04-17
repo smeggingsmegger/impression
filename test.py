@@ -6,6 +6,8 @@ import impression
 from impression.mixin import safe_commit
 from impression.models import User, ApiKey, Content
 
+from itsdangerous import TimestampSigner
+
 import simplejson as json
 if hexversion < 0x02070000:
     import unittest2 as unittest
@@ -32,6 +34,7 @@ class impressionTestCase(unittest.TestCase):
         key = '{0:02X}'.format(randrange(36**50))
         self.api_key = ApiKey(key=key, name='test-key')
         self.api_key.insert()
+        self.s = TimestampSigner(key)
         safe_commit()
 
         hashed_password = generate_password_hash('password-123')
@@ -46,7 +49,7 @@ class impressionTestCase(unittest.TestCase):
         impression.db.drop_all(bind=[None])
 
     def test_content_create(self):
-        api_key = self.api_key.key
+        api_key = self.s.sign(self.api_key.name)
 
         '''
         CREATE
@@ -116,7 +119,7 @@ class impressionTestCase(unittest.TestCase):
         safe_commit()
 
     def test_content_retrieve(self):
-        api_key = self.api_key.key
+        api_key = self.s.sign(self.api_key.name)
         user_id = self.user.id
 
         '''
@@ -150,7 +153,7 @@ class impressionTestCase(unittest.TestCase):
         self.assertEquals(user_id, data['content']['user_id'])
 
     def test_user_create(self):
-        api_key = self.api_key.key
+        api_key = self.s.sign(self.api_key.name)
 
         '''
         CREATE
@@ -192,7 +195,7 @@ class impressionTestCase(unittest.TestCase):
         safe_commit()
 
     def test_user_retrieve(self):
-        api_key = self.api_key.key
+        api_key = self.s.sign(self.api_key.name)
 
         '''
         RETRIEVE
@@ -214,7 +217,7 @@ class impressionTestCase(unittest.TestCase):
         self.assertEquals(data['user']['name'], 'Test User')
 
     def test_user_update(self):
-        api_key = self.api_key.key
+        api_key = self.s.sign(self.api_key.name)
 
         '''
         UPDATE
@@ -247,7 +250,7 @@ class impressionTestCase(unittest.TestCase):
         self.assertTrue(check_password_hash(user.password, 'newperson123'))
 
     def test_user_delete(self):
-        api_key = self.api_key.key
+        api_key = self.s.sign(self.api_key.name)
 
         '''
         DELETE

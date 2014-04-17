@@ -7,6 +7,8 @@ from impression.models import Setting, ApiKey, User
 from flask import request, redirect, url_for, g, jsonify, session
 from flask.ext.themes2 import get_theme, render_theme_template
 
+from itsdangerous import TimestampSigner, SignatureExpired
+
 '''
 Misc functions that do things like get the current theme and render templates.
 '''
@@ -30,11 +32,22 @@ def get_settings():
 
 def get_api_key(request):
     try:
-        api_key_id = request.POST.get('api_key')
+        api_key_name = request.POST.get('api_key', '')
     except AttributeError:
-        api_key_id = request.form.get('api_key')
+        api_key_name = request.form.get('api_key', '')
 
-    api_key = ApiKey.filter_by(key=api_key_id).first()
+    # There is probably a better way to do this.
+    api_keys = ApiKey.all()
+    api_key = None
+    for ak in api_keys:
+        if api_key_name.startswith(ak.name):
+            try:
+                s = TimestampSigner(ak.key)
+                s.unsign(api_key_name, max_age=120)
+                api_key = ak
+            except SignatureExpired:
+                pass
+
     return api_key
 
 def get_payload(request):
