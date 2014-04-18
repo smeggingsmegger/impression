@@ -3,7 +3,7 @@ from flask import redirect, request, url_for, g, jsonify
 
 from impression import app
 from impression.controls import render, admin_required, key_or_admin_required, get_payload
-from impression.mixin import safe_commit
+from impression.mixin import paginate, results_to_dict, safe_commit
 from impression.models import User, Content
 from impression.utils import success, failure
 
@@ -43,17 +43,33 @@ def create_content():
     return jsonify(return_value)
 
 @app.route('/content_retrieve', methods=['POST'])
-@key_or_admin_required
 def retrieve_content():
     return_value = success('The content was retrieved.')
+    return_value['contents'] = []
+
     payload = get_payload(request)
 
-    content = Content.get(payload.get('id'))
-    if content:
-        return_value['content'] = content.to_dict(camel_case=True)
+    content_id = payload.get('id')
+    if content_id:
+        content = Content.get(content_id)
+        if content:
+            return_value['contents'] = [content.to_dict(camel_case=True)]
+        else:
+            return_value['success'] = False
+            return_value['messages'] = ['No content found with that ID.']
     else:
-        return_value['success'] = False
-        return_value['messages'] = ['No content found with that ID.']
+        # No ID passed... we should return more than one result.
+        current_page = payload.get('current_page', 1)
+        page_size = payload.get('page_size', 5)
+        content_type = payload.get('content_type', 'post')
+        published = payload.get('published', True)
+        contents = Content.filter(Content.type == content_type)\
+                          .filter(Content.published == published)\
+                          .order_by(Content.published_on.desc())
+
+        contents, maxpages = paginate(contents, current_page, page_size)
+        if contents:
+            return_value['contents'] = results_to_dict(contents, camel_case=True)
 
     return jsonify(return_value)
 

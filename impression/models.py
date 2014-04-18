@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+from datetime import datetime
+
 from impression import db
 from mixin import OurMixin
 from impression.utils import success #, failure
@@ -29,6 +31,8 @@ class Content(OurMixin, db.Model):
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship("User", cascade='delete')
     published = db.Column(db.Boolean(), default=False, server_default='0')
+    published_on = db.Column(db.DateTime(), nullable=False, default=datetime.now)
+
 
     def validate(self):
         return_value = success()

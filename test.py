@@ -119,7 +119,6 @@ class impressionTestCase(unittest.TestCase):
         safe_commit()
 
     def test_content_retrieve(self):
-        api_key = self.s.sign(self.api_key.name)
         user_id = self.user.id
 
         '''
@@ -127,30 +126,64 @@ class impressionTestCase(unittest.TestCase):
         '''
 
         # Create some content using the model directly...
-        content = Content(title="Test Content", type="post", body="blah blah blah", user_id=self.user.id)
+        content = Content(title="Test Content", published=True, type="post", body="blah blah blah", user_id=self.user.id)
         content.insert()
+
+        content = content.to_dict()
+
+        content2 = Content(title="Test Content 2", published=True, type="post", body="blah blah blah", user_id=self.user.id)
+        content2.insert()
+
+        content2 = content2.to_dict()
+
+        content3 = Content(title="Test Content 3", published=True, type="post", body="blah blah blah", user_id=self.user.id)
+        content3.insert()
+
+        content3 = content3.to_dict()
+
+        content4 = Content(title="Test Content 4", published=True, type="post", body="blah blah blah", user_id=self.user.id)
+        content4.insert()
+
+        content4 = content4.to_dict()
+
         safe_commit()
 
         post_data = {
-            'id': content.id
+            'id': content['id']
         }
-        # Try to retrieve the content with no API key
-        rv = self.app.post('/content_retrieve', data=post_data, follow_redirects=True)
-        data = json.loads(rv.data)
-        self.assertFalse(data['success'])
-
         # retrieve the content. This should work fine.
-        post_data['api_key'] = api_key
         rv = self.app.post('/content_retrieve', data=post_data, follow_redirects=True)
         data = json.loads(rv.data)
         self.assertTrue(data['success'])
-        self.assertTrue(data['content'])
+        self.assertTrue(data['contents'][0])
         self.assertIsNotNone(data['messages'])
 
-        content = Content.get(data['content']['id'])
-        self.assertEquals(content.title, data['content']['title'])
-        self.assertEquals(content.body, data['content']['body'])
-        self.assertEquals(user_id, data['content']['user_id'])
+        content = Content.get(data['contents'][0]['id'])
+        self.assertEquals(content.title, data['contents'][0]['title'])
+        self.assertEquals(content.body, data['contents'][0]['body'])
+        self.assertEquals(user_id, data['contents'][0]['user_id'])
+
+        post_data = {
+            'content_type': 'post',
+            'page_size': 3
+        }
+        # retrieve the content. This should work fine.
+        rv = self.app.post('/content_retrieve', data=post_data, follow_redirects=True)
+        data = json.loads(rv.data)
+        self.assertTrue(data['success'])
+
+        # There should be three posts.
+        self.assertEquals(data['contents'][0]['title'], content4['title'])
+        self.assertEquals(data['contents'][1]['title'], content3['title'])
+        self.assertEquals(data['contents'][2]['title'], content2['title'])
+
+        # And only three posts returned
+        self.assertTrue(len(data['contents']) == 3)
+
+        # Posts should be in the right order
+        self.assertTrue(data['contents'][1]['published_on'] < data['contents'][0]['published_on'])
+
+        self.assertIsNotNone(data['messages'])
 
     def test_user_create(self):
         api_key = self.s.sign(self.api_key.name)
