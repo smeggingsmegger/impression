@@ -129,7 +129,7 @@ class impressionTestCase(unittest.TestCase):
         content = Content(title="Test Content", published=True, type="post", body="blah blah blah", user_id=self.user.id)
         content.insert()
 
-        content = content.to_dict()
+        content1 = content.to_dict()
 
         content2 = Content(title="Test Content 2", published=True, type="post", body="blah blah blah", user_id=self.user.id)
         content2.insert()
@@ -149,7 +149,7 @@ class impressionTestCase(unittest.TestCase):
         safe_commit()
 
         post_data = {
-            'id': content['id']
+            'id': content.id
         }
         # retrieve the content. This should work fine.
         rv = self.app.post('/content_retrieve', data=post_data, follow_redirects=True)
@@ -184,6 +184,22 @@ class impressionTestCase(unittest.TestCase):
         self.assertTrue(data['contents'][1]['published_on'] < data['contents'][0]['published_on'])
 
         self.assertIsNotNone(data['messages'])
+
+        post_data = {
+            'content_type': 'post',
+            'current_page': 2,
+            'page_size': 3
+        }
+        # retrieve the content. This should work fine.
+        rv = self.app.post('/content_retrieve', data=post_data, follow_redirects=True)
+        data = json.loads(rv.data)
+        self.assertTrue(data['success'])
+
+        # There should be one post.
+        self.assertEquals(data['contents'][0]['title'], content1['title'])
+
+        # And only one post returned
+        self.assertTrue(len(data['contents']) == 1)
 
     def test_user_create(self):
         api_key = self.s.sign(self.api_key.name)
