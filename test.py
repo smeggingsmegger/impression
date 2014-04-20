@@ -8,7 +8,7 @@ import impression
 from cStringIO import StringIO
 
 from impression.mixin import safe_commit
-from impression.models import User, ApiKey, Content
+from impression.models import User, ApiKey, Content, File
 
 from itsdangerous import TimestampSigner
 
@@ -54,13 +54,17 @@ class impressionTestCase(unittest.TestCase):
 
     def test_upload(self):
         filename = 'test.txt'
-        rv = self.app.post('/upload', data=dict(
-            file=(StringIO("This is a test file."), filename),
-        ))
+        post_data = {
+            'file': (StringIO("This is a test file."), filename),
+            'name': 'Test File',
+            'user_id': self.user.id
+        }
+        rv = self.app.post('/upload', data=post_data, follow_redirects=True)
         self.assertEquals(rv.status_code, 200)
         data = json.loads(rv.data)
         self.assertEquals(data['messages'][0], 'The file was uploaded.')
-
+        afile = File.get(data['id'])
+        self.assertEquals(data['id'], afile.id)
         the_file = os.path.join(impression.app.config['UPLOAD_FOLDER'], filename)
 
         self.assertTrue(os.path.isfile(the_file))

@@ -6,7 +6,7 @@ from flask import redirect, request, url_for, g, jsonify, send_from_directory
 from impression import app
 from impression.controls import render, admin_required, key_or_admin_required, get_payload
 from impression.mixin import paginate, results_to_dict, safe_commit
-from impression.models import User, Content
+from impression.models import User, Content, File
 from impression.utils import success, failure
 
 from werkzeug.security import generate_password_hash
@@ -29,10 +29,17 @@ def allowed_file(filename):
 @app.route('/upload', methods=['POST'])
 def upload_file():
     return_value = success('The file was uploaded.')
-    file = request.files['file']
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    payload = get_payload(request)
+
+    ufile = request.files['file']
+    if ufile and allowed_file(ufile.filename):
+        filename = secure_filename(ufile.filename)
+        path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        ufile.save(path)
+        afile = File(name=payload.get('name'), user_id=payload.get('user_id'), path=path)
+        afile.insert()
+        safe_commit()
+        return_value['id'] = afile.id
     return jsonify(return_value)
 
 @app.route('/uploads/<filename>')

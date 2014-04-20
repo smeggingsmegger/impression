@@ -67,13 +67,12 @@ class RoleType(OurMixin, db.Model):
     id = db.Column(db.VARCHAR(length=36), primary_key=True)
     name = db.Column(db.String(60))
 
-class Image(OurMixin, db.Model):
-    __tablename__ = 'images'
+class File(OurMixin, db.Model):
+    __tablename__ = 'files'
 
     id = db.Column(db.VARCHAR(length=36), primary_key=True)
     name = db.Column(db.VARCHAR(length=256), nullable=False)
-    path = db.Column(db.VARCHAR(length=512), nullable=False)
-    url = db.Column(db.VARCHAR(length=512), nullable=False)
+    path = db.Column(db.VARCHAR(length=512), nullable=True)
     width = db.Column(db.Integer(), default=0, server_default='0')
     height = db.Column(db.Integer(), default=0, server_default='0')
     size = db.Column(db.Integer(), default=0, server_default='0')
