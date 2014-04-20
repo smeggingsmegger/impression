@@ -1,4 +1,6 @@
-from flask import redirect, request, url_for, g, jsonify
+import os
+
+from flask import redirect, request, url_for, g, jsonify, send_from_directory
 # from flask import request, redirect, url_for, g, session, jsonify
 
 from impression import app
@@ -8,6 +10,7 @@ from impression.models import User, Content
 from impression.utils import success, failure
 
 from werkzeug.security import generate_password_hash
+from werkzeug.utils import secure_filename
 
 '''
 All routes go here.
@@ -15,6 +18,26 @@ All routes go here.
 @app.route('/', methods=['GET'])
 def index():
     return render('index.html', user=g.user)
+
+'''
+IMAGE ROUTES
+'''
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    return_value = success('The file was uploaded.')
+    file = request.files['file']
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    return jsonify(return_value)
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 '''
 CONTENT ROUTES

@@ -1,8 +1,12 @@
 #!/usr/bin/env python
+import os
+
 from random import randrange
 from sys import hexversion
 
 import impression
+from cStringIO import StringIO
+
 from impression.mixin import safe_commit
 from impression.models import User, ApiKey, Content
 
@@ -47,6 +51,22 @@ class impressionTestCase(unittest.TestCase):
 
     def tearDown(self):
         impression.db.drop_all(bind=[None])
+
+    def test_upload(self):
+        filename = 'test.txt'
+        rv = self.app.post('/upload', data=dict(
+            file=(StringIO("This is a test file."), filename),
+        ))
+        self.assertEquals(rv.status_code, 200)
+        data = json.loads(rv.data)
+        self.assertEquals(data['messages'][0], 'The file was uploaded.')
+
+        the_file = os.path.join(impression.app.config['UPLOAD_FOLDER'], filename)
+
+        self.assertTrue(os.path.isfile(the_file))
+
+        # Delete the file we uploaded
+        os.unlink(the_file)
 
     def test_content_create(self):
         api_key = self.s.sign(self.api_key.name)

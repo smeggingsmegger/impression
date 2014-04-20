@@ -14,3 +14,8 @@ DEFAULT_MAIL_SENDER = 'admin@somehost.com'
 # Replace this with something real.
 SERVER_PATH = 'srv/www'
 DEFAULT_THEME = 'impression'
+
+# File upload settings
+UPLOAD_FOLDER = 'uploads/'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'tiff'])
+MAX_CONTENT_LENGTH = 16 * 1024 * 1024
