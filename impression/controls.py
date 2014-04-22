@@ -2,7 +2,7 @@
 from functools import wraps
 
 from impression import app
-from impression.models import Setting, ApiKey, User
+from impression.models import Setting, ApiKey, User, Content
 
 from flask import request, redirect, url_for, g, jsonify, session
 from flask.ext.themes2 import get_theme, render_theme_template
@@ -12,6 +12,15 @@ from itsdangerous import TimestampSigner, SignatureExpired
 '''
 Misc functions that do things like get the current theme and render templates.
 '''
+def make_slug(title, delimiter='-'):
+    slug = delimiter.join([w for w in re.sub('[^\w ]', '', title.replace('-', ' ')).lower().split(' ') if w])
+    count = Content.filter(Content.slug == slug).count()
+    slug = slug if not count else "{0}{1}{2}".format(slug, delimiter, count)
+    return slug
+
+def is_slug(slug):
+    return bool(re.search('^[a-z]+-?', slug))
+
 def get_current_theme(app, g):
     if g.theme is not None:
         ident = g.theme
