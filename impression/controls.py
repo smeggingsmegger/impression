@@ -120,8 +120,11 @@ def login_required(fnctn):
 def admin_required(fnctn):
     @wraps(fnctn)
     def decorated_function(*args, **kwargs):
-        if not g.user.admin and not g.user.admin:
-            return redirect(url_for('admin_login', next=request.url))
+        if g.user:
+            if not g.user.admin and not g.user.admin:
+                return redirect(url_for('login', next=request.url))
+        else:
+            return redirect(url_for('login', next=request.url))
         return fnctn(*args, **kwargs)
     return decorated_function
 

@@ -10,6 +10,7 @@
 
     <!-- Core CSS - Include with every page -->
     <link href="{{ theme_static('css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ theme_static('css/bootbar.css') }}" rel="stylesheet" />
     <link href="{{ theme_static('font-awesome/css/font-awesome.css') }}" rel="stylesheet" />
 
     <!-- SB Admin CSS - Include with every page -->
@@ -38,13 +39,14 @@
     <!-- Core Scripts - Include with every page -->
     <script src="{{ theme_static('js/jquery-1.11.0.min.js') }}"></script>
     <script src="{{ theme_static('js/bootstrap.min.js') }}"></script>
+    <script src="{{ theme_static('js/bootbar.min.js') }}"></script>
     <script src="{{ theme_static('js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
 
     <!-- SB Admin Scripts - Include with every page -->
     <script src="{{ theme_static('js/sb-admin.js') }}"></script>
     <script type=text/javascript>
-    window.setTimeout(function() { $(".alert").fadeOut('slow'); }, 4000);
-    $('.date-field').datepicker();
+    /* window.setTimeout(function() { $(".alert").fadeOut('slow'); }, 4000); */
+    /* $('.date-field').datepicker(); */
     </script>
     {% block javascript %}{% endblock javascript %}
 

@@ -2,6 +2,8 @@
 import shlex
 import subprocess
 
+from werkzeug.security import generate_password_hash
+
 # from impression import app
 from impression.mixin import safe_commit
 from impression.models import *
@@ -29,6 +31,12 @@ def main():
         print("Stamping with latest Alembic revision: %s" % latest_alembic)
         args = shlex.split("alembic stamp %s" % latest_alembic)
         subprocess.Popen(args, stdout=subprocess.PIPE)
+
+    hashed_password = generate_password_hash('testy21')
+
+    # Create a user to update and delete later.
+    user = User(name="Test User", email='test@test.com', admin=True, openid='', password=hashed_password)
+    user.insert()
 
     safe_commit()
 

@@ -55,15 +55,23 @@ def create_content():
     return_value = success('The content was created.')
     payload = get_payload(request)
 
-    content = Content()
-    content.type = payload.get('type')
+    editing = False
+    if payload.get('id'):
+        content = Content.get(payload.get('id'))
+        editing = True
+        return_value = success('The content was updated.')
+    else:
+        content = Content()
+
+    content.type = payload.get('type').lower()
     content.title = payload.get('title')
     content.body = payload.get('body')
     content.user_id = payload.get('user_id')
+    content.parser = payload.get('parser', 'markdown')
     content.published = payload.get('published', False)
 
     valid = content.validate()
-    if valid['success']:
+    if valid['success'] or editing:
         content.insert()
         safe_commit()
         return_value['id'] = content.id
@@ -187,9 +195,35 @@ def delete_user():
 
     return jsonify(return_value)
 
+'''
+ADMIN ROUTES
+'''
+@app.route('/admin_pages/add', methods=['GET'])
 @admin_required
+def admin_pages_add():
+    return render('admin_content.html', user=g.user, content_type="Page", action="Add", body='', title='', content_parser='markdown')
+
+@app.route('/admin_pages/edit/<string:content_id>', methods=['GET'])
+@admin_required
+def admin_pages_edit(content_id):
+    content = Content.get(content_id)
+    return render('admin_content.html', user=g.user, content_type=content.type, action="Edit", body=content.body, title=content.title, content_parser=content.parser)
+
+@app.route('/admin_pages', methods=['GET'])
+@admin_required
+def admin_pages_list():
+    contents = Content.filter(Content.type == 'page').all()
+    return render('admin_content_list.html', contents=contents, content_type="Pages")
+
+@app.route('/admin_posts', methods=['GET'])
+@admin_required
+def admin_posts_list():
+    contents = Content.filter(Content.type == 'post').all()
+    return render('admin_content_list.html', contents=contents, content_type="Posts")
+
 @app.route('/admin', methods=['GET'])
 @app.route('/admin/', methods=['GET'])
+@admin_required
 def admin():
     return render('admin_index.html', user=g.user)
 
@@ -211,7 +245,11 @@ def post_login():
     if user:
         if check_password_hash(user.password, payload['password']):
             session['userid'] = user.id
-            return redirect(url_for('admin'))
+            next_url = request.args.get('next', '')
+            if next_url:
+                return redirect(next_url)
+            else:
+                return redirect(url_for('admin'))
         else:
             flash("Incorrect password")
     else:

@@ -22,7 +22,8 @@
                 <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                 </li>
                 <li class="divider"></li>
-                <li><a href="/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                <li>
+                    <a href="/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                 </li>
             </ul>
             <!-- /.dropdown-user -->
@@ -34,22 +35,51 @@
     <div class="navbar-default navbar-static-side" role="navigation">
         <div class="sidebar-collapse">
             <ul class="nav" id="side-menu">
-                <!-- <li class="sidebar-search"> -->
-                    <!-- <div class="input-group custom-search-form"> -->
-                        <!-- <input type="text" class="form-control" placeholder="Search..."> -->
-                        <!-- <span class="input-group-btn"> -->
-                        <!-- <button class="btn btn-default" type="button"> -->
-                            <!-- <i class="fa fa-search"></i> -->
-                        <!-- </button> -->
-                    <!-- </span> -->
-                    <!-- </div> -->
-                    <!-- [> /input-group <] -->
-                <!-- </li> -->
-                <li>
-                    <a href="/admin_pages"><i class="fa fa-file-text-o fa-fw"></i> Pages</a>
+                <li class="sidebar-search">
+                    <div class="input-group custom-search-form">
+                        <input type="text" class="form-control" placeholder="Search...">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
                 </li>
                 <li>
-                    <a href="/admin_posts"><i class="fa fa-list-alt fa-fw"></i> Blog Posts</a>
+                <a href="#"><i class="fa fa-file-text-o fa-fw"></i> Pages<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="/admin_pages">Edit Pages</a>
+                        </li>
+                        <li>
+                            <a href="/admin_pages/add">Add Page</a>
+                        </li>
+                    </ul>
+                    <!-- /.nav-second-level -->
+                </li>
+                <li>
+                <a href="#"><i class="fa fa-list-alt fa-fw"></i> Blog Posts<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="/admin_posts">Edit Posts</a>
+                        </li>
+                        <li>
+                            <a href="/admin_posts/add">Add Post</a>
+                        </li>
+                    </ul>
+                    <!-- /.nav-second-level -->
+                </li>
+                <li>
+                <a href="#"><i class="fa fa-file-image-o fa-fw"></i> Files<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="/admin_files">Edit Files</a>
+                        </li>
+                        <li>
+                            <a href="/admin_files/add">Upload File</a>
+                        </li>
+                    </ul>
+                    <!-- /.nav-second-level -->
                 </li>
             </ul>
             <!-- /#side-menu -->

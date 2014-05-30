@@ -26,7 +26,7 @@ class Content(OurMixin, db.Model):
     id = db.Column(db.VARCHAR(length=36), primary_key=True)
     title = db.Column(db.VARCHAR(length=512))
     type = db.Column(db.Enum('post', 'page'), nullable=False)
-    parser = db.Column(db.Enum('markup', 'html', 'textile'), nullable=False, default='markup')
+    parser = db.Column(db.Enum('markdown', 'html', 'textile', 'mediawiki'), nullable=False, default='markdown')
     url = db.Column(db.VARCHAR(length=256))
     body = db.Column(db.TEXT())
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
