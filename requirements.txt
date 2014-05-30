@@ -5,3 +5,6 @@ SQLAlchemy
 alembic
 nose
 simplejson
+Markdown
+textile
+python-creole

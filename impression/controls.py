@@ -120,7 +120,7 @@ def login_required(fnctn):
 def admin_required(fnctn):
     @wraps(fnctn)
     def decorated_function(*args, **kwargs):
-        if not g.user.admin and not g.admin:
+        if not g.user.admin and not g.user.admin:
             return redirect(url_for('admin_login', next=request.url))
         return fnctn(*args, **kwargs)
     return decorated_function
@@ -137,11 +137,7 @@ Before we process any request, let's do some things.
 @app.before_request
 def before_request():
     g.user = None
-    g.admin = False
     g.theme = 'impression'
-
-    if 'admin' in session and session['admin']:
-        g.admin = True
 
     if 'userid' in session:
         g.user = User.get(session['userid'])

@@ -1,6 +1,6 @@
 import os
 
-from flask import redirect, request, url_for, g, jsonify, send_from_directory
+from flask import redirect, request, url_for, g, jsonify, send_from_directory, flash, session
 # from flask import request, redirect, url_for, g, session, jsonify
 
 from impression import app
@@ -9,7 +9,7 @@ from impression.mixin import paginate, results_to_dict, safe_commit
 from impression.models import User, Content, File
 from impression.utils import success, failure
 
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
 '''
@@ -189,11 +189,33 @@ def delete_user():
 
 @admin_required
 @app.route('/admin', methods=['GET'])
+@app.route('/admin/', methods=['GET'])
 def admin():
-    if not g.user and not g.admin:
-        return redirect(url_for('login'))
-    return render('admin.html', user=g.user)
+    return render('admin_index.html', user=g.user)
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    session['userid'] = None
+    return render('login.html')
 
 @app.route('/login', methods=['GET'])
 def login():
-    return render('login.html', user=g.user)
+    if g.user and g.user.admin:
+        return redirect(url_for('admin'))
+    return render('login.html')
+
+@app.route('/post_login', methods=['POST'])
+def post_login():
+    payload = get_payload(request)
+    user = User.filter(User.email == payload.get('email')).first()
+    if user:
+        if check_password_hash(user.password, payload['password']):
+            session['userid'] = user.id
+            return redirect(url_for('admin'))
+        else:
+            flash("Incorrect password")
+    else:
+        flash("Invalid user")
+
+    return redirect(url_for('login'))
+

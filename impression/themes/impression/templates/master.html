@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Impression{% block title %}{% endblock title %}</title>
+
+    <!-- Core CSS - Include with every page -->
+    <link href="{{ theme_static('css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ theme_static('font-awesome/css/font-awesome.css') }}" rel="stylesheet" />
+
+    <!-- Add custom CSS here -->
+    <link href="{{ theme_static('css/blog-home.css') }}" rel="stylesheet">
+    {% block css %}{% endblock css %}
+
+    {% block meta %}{% endblock meta %}
+</head>
+
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.php">Start Bootstrap</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="#about">About</a>
+                    </li>
+                    <li><a href="#services">Services</a>
+                    </li>
+                    <li><a href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        <div id='alerts'>
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                <a class="close" data-dismiss="alert" href="#">x</a>
+                {{ message|safe }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endwith %}
+
+    {% block content %}{% endblock content %}
+        <hr>
+
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; Company 2013</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- Core Scripts - Include with every page -->
+    <script src="{{ theme_static('js/jquery-1.11.0.min.js') }}"></script>
+    <script src="{{ theme_static('js/bootstrap.min.js') }}"></script>
+    {% block javascript %}{% endblock javascript %}
+
+</body>
+
+</html>

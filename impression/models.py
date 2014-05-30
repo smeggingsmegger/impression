@@ -26,6 +26,7 @@ class Content(OurMixin, db.Model):
     id = db.Column(db.VARCHAR(length=36), primary_key=True)
     title = db.Column(db.VARCHAR(length=512))
     type = db.Column(db.Enum('post', 'page'), nullable=False)
+    parser = db.Column(db.Enum('markup', 'html', 'textile'), nullable=False, default='markup')
     url = db.Column(db.VARCHAR(length=256))
     body = db.Column(db.TEXT())
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
@@ -45,6 +46,22 @@ class Content(OurMixin, db.Model):
             return_value['messages'].append("A title is required to create a post or a page.")
 
         return return_value
+
+    def parse(self):
+        content = ''
+        if self.parser == 'html':
+            content = self.body
+        elif self.parser == 'markdown':
+            import markdown
+            content = markdown.markdown(self.body)
+        elif self.parser == 'textile':
+            import textile
+            content = textile.textile(self.body)
+        elif self.parser == 'mediawiki':
+            from creole import creole2html
+            content = creole2html(unicode(self.body))
+
+        return content
 
 class Setting(OurMixin, db.Model):
     __tablename__ = 'settings'

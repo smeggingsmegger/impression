@@ -5,9 +5,21 @@ from flask.ext.themes2 import Themes
 
 import os
 
+# Yay! I love coding Python X :(
+try:
+    unicode = unicode
+except NameError:
+    # unicode is undefined: We are running Python 3
+    unicode = str
+    basestring = (str, bytes)
+else:
+    # unicode is defined: We are running Python 2
+    bytes = str
+
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
-app.secret_key = ''
+app.secret_key = os.urandom(24)
+
 Themes(app)
 
 # mail = Mail(app)

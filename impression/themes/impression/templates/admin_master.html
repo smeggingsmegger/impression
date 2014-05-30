@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Impression{% block title %}{% endblock title %}</title>
+
+    <!-- Core CSS - Include with every page -->
+    <link href="{{ theme_static('css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ theme_static('font-awesome/css/font-awesome.css') }}" rel="stylesheet" />
+
+    <!-- SB Admin CSS - Include with every page -->
+    <link href="{{ theme_static('css/sb-admin.css') }}" rel="stylesheet">
+    {% block css %}{% endblock css %}
+
+    {% block meta %}{% endblock meta %}
+
+</head>
+
+<body>
+    <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    <div id='alerts'>
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            <a class="close" data-dismiss="alert" href="#">x</a>
+            {{ message|safe }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endwith %}
+    </div>
+    {% block content %}{% endblock content %}
+
+    <!-- Core Scripts - Include with every page -->
+    <script src="{{ theme_static('js/jquery-1.11.0.min.js') }}"></script>
+    <script src="{{ theme_static('js/bootstrap.min.js') }}"></script>
+    <script src="{{ theme_static('js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
+
+    <!-- SB Admin Scripts - Include with every page -->
+    <script src="{{ theme_static('js/sb-admin.js') }}"></script>
+    <script type=text/javascript>
+    window.setTimeout(function() { $(".alert").fadeOut('slow'); }, 4000);
+    $('.date-field').datepicker();
+    </script>
+    {% block javascript %}{% endblock javascript %}
+
+</body>
+
+</html>
