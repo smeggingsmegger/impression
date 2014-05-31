@@ -59,7 +59,7 @@ class impressionTestCase(unittest.TestCase):
             'name': 'Test File',
             'user_id': self.user.id
         }
-        rv = self.app.post('/upload', data=post_data, follow_redirects=True)
+        rv = self.app.post('/upload_ajax', data=post_data, follow_redirects=True)
         self.assertEquals(rv.status_code, 200)
         data = json.loads(rv.data)
         self.assertEquals(data['messages'][0], 'The file was uploaded.')

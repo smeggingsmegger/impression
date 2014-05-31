@@ -103,6 +103,7 @@ class File(OurMixin, db.Model):
     size = db.Column(db.Integer(), default=0, server_default='0')
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship("User", cascade='delete')
+    mimetype = db.Column(db.VARCHAR(length=256), nullable=False)
 
 class User(OurMixin, db.Model):
     __tablename__ = 'users'

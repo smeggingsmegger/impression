@@ -9,3 +9,4 @@ Markdown
 textile
 python-creole
 python-dateutil
+pillow

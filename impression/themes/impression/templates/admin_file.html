@@ -1,0 +1,29 @@
+{% extends theme("admin_master.html") %}
+
+{% block title %} - Upload File{% endblock %}
+
+{% block content %}
+    <div id="wrapper">
+        {% include theme("admin_menu.html") %}
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Upload File</h1>
+                    <form enctype="multipart/form-data" action="/upload" method="POST">
+                    <input type="hidden" name="user_id" id="user-id" value="{{ g.user.id }}" />
+                    <label class="control-label">Select File</label>
+                    <input id="file" name="file" type="file" class="file" data-show-preview="true" />
+                    </form>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+{% endblock content %}
+
+{% block javascript %}
+{% endblock javascript %}

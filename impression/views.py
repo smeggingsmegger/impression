@@ -28,25 +28,51 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
-@app.route('/upload', methods=['POST'])
-def upload_file():
+@app.route('/upload_ajax', methods=['POST'])
+def upload_ajax():
     return_value = success('The file was uploaded.')
     payload = get_payload(request)
-
     ufile = request.files['file']
+    file_id = upload_file(payload, ufile)
+    return_value['id'] = file_id
+    return jsonify(return_value)
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    payload = get_payload(request)
+    ufile = request.files['file']
+    upload_file(payload, ufile)
+    return redirect("/admin/files")
+
+def upload_file(payload, ufile):
     if ufile and allowed_file(ufile.filename):
         filename = secure_filename(ufile.filename)
-        path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        path = os.path.join(".", app.config['UPLOAD_FOLDER'], filename)
         ufile.save(path)
-        afile = File(name=payload.get('name'), user_id=payload.get('user_id'), path=path)
+
+        try:
+            # Create thumbnail
+            from PIL import Image
+            size = 128, 128
+            im = Image.open(path)
+            width, height = im.size
+            im.thumbnail(size, Image.ANTIALIAS)
+            file, ext = os.path.splitext(path)
+            im.save(file + "_thumbnail" + ext.lower(), ext.replace(".", ""))
+        except (ImportError, IOError):
+            width = 0
+            height = 0
+
+        afile = File(name=filename, user_id=payload.get('user_id'), path=path, size=os.path.getsize(path), width=width, height=height, mimetype=ufile.mimetype)
         afile.insert()
         safe_commit()
-        return_value['id'] = afile.id
-    return jsonify(return_value)
+        return afile.id
+    return None
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    path = os.path.abspath("./" + app.config['UPLOAD_FOLDER'])
+    return send_from_directory(path, filename)
 
 '''
 CONTENT ROUTES
@@ -221,6 +247,17 @@ def delete_user():
 '''
 ADMIN ROUTES
 '''
+@app.route('/admin/files', methods=['GET'])
+@admin_required
+def admin_files_list():
+    files = File.all()
+    return render('admin_files_list.html', files=files)
+
+@app.route('/admin/files/add', methods=['GET'])
+@admin_required
+def admin_files_add():
+    return render('admin_file.html')
+
 @app.route('/admin/pages/add', methods=['GET'])
 @admin_required
 def admin_pages_add():
