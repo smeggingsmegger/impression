@@ -41,32 +41,36 @@ def upload_ajax():
 def upload():
     payload = get_payload(request)
     ufile = request.files['file']
-    upload_file(payload, ufile)
-    return redirect("/admin/files")
+    file_id = upload_file(payload, ufile)
+    if file_id:
+        flash("File uploaded!")
+    else:
+        flash("There was a problem uploading that file.")
+    return redirect("/admin/files/add")
 
 def upload_file(payload, ufile):
     if ufile and allowed_file(ufile.filename):
         filename = secure_filename(ufile.filename)
         path = os.path.join(".", app.config['UPLOAD_FOLDER'], filename)
-        ufile.save(path)
+        if not os.path.isfile(path):
+            ufile.save(path)
+            try:
+                # Create thumbnail
+                from PIL import Image
+                size = 128, 128
+                im = Image.open(path)
+                width, height = im.size
+                im.thumbnail(size, Image.ANTIALIAS)
+                file, ext = os.path.splitext(path)
+                im.save(file + "_thumbnail" + ext.lower(), ext.replace(".", ""))
+            except (ImportError, IOError):
+                width = 0
+                height = 0
 
-        try:
-            # Create thumbnail
-            from PIL import Image
-            size = 128, 128
-            im = Image.open(path)
-            width, height = im.size
-            im.thumbnail(size, Image.ANTIALIAS)
-            file, ext = os.path.splitext(path)
-            im.save(file + "_thumbnail" + ext.lower(), ext.replace(".", ""))
-        except (ImportError, IOError):
-            width = 0
-            height = 0
-
-        afile = File(name=filename, user_id=payload.get('user_id'), path=path, size=os.path.getsize(path), width=width, height=height, mimetype=ufile.mimetype)
-        afile.insert()
-        safe_commit()
-        return afile.id
+            afile = File(name=filename, user_id=payload.get('user_id'), path=path, size=os.path.getsize(path), width=width, height=height, mimetype=ufile.mimetype)
+            afile.insert()
+            safe_commit()
+            return afile.id
     return None
 
 @app.route('/uploads/<filename>')

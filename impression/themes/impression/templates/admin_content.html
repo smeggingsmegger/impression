@@ -41,8 +41,9 @@
                                 <label for="body">Body</label>
                                 <div id="body" style="border-radius: 5px; width: 100%; height: 100%; min-height: 500px;">{{ content.body }}</div>
                             </div>
-                            <button id="save" class="btn btn-default">Save</button>
-                            <button id="preview" class="btn btn-default">Preview</button>
+                            <button id="save" class="btn btn-success">Save</button>
+                            <button id="preview" class="btn btn-primary">Preview</button>
+                            <button id="help" class="btn btn-default">Help</button>
                         </form>
                     </div>
                     <!-- /.col-lg-12 -->
@@ -79,6 +80,30 @@
         {% else %}
             editor.getSession().setMode("ace/mode/{{ content.parser }}");
         {% endif %}
+        $("#help").click(function(e) {
+            e.preventDefault();
+            var parser = $("content-parser").val();
+            console.log(parser);
+            var url = "http://daringfireball.net/projects/markdown/syntax";
+            if (parser === "textile") {
+                url = "http://redcloth.org/hobix.com/textile/quick.html";
+            }
+            else if (parser === "mediawiki") {
+                url = "http://www.mediawiki.org/wiki/Help:Formatting";
+            }
+            else if (parser === "html") {
+                url = "http://www.webmonkey.com/2010/02/html_cheatsheet/";
+            }
+            save_content(true, url);
+        });
+        function show_preview(url) {
+            $("#preview-iframe").height($("#page-wrapper").height() - $("#navigation-bar").height());
+            $("#preview-iframe").width($("#edit-window").width());
+            $("#preview-iframe").attr("src", url);
+            $("#preview-div").show();
+            $("#edit-window").hide();
+            window.scrollTo(0, 0);
+        }
         $("#content-parser").change(function() {
             var optionSelected = $("option:selected", this);
             var valueSelected = this.value;
@@ -89,7 +114,7 @@
                 editor.getSession().setMode("ace/mode/text");
             }
         });
-        function save_content(showPreview) {
+        function save_content(showPreview, url) {
             body = editor.getValue();
             title = $('#title').val();
             content_parser = $('#content-parser').val();
@@ -122,12 +147,10 @@
                 }
                 $.bootbar.show(data.messages[0], { autoDismiss: true });
                 if (showPreview) {
-                    $("#preview-iframe").height($("#page-wrapper").height() - $("#navigation-bar").height());
-                    $("#preview-iframe").width($("#edit-window").width());
-                    $("#preview-iframe").attr("src", "/" + content_type + "/" + data.id);
-                    $("#preview-div").show();
-                    $("#edit-window").hide();
-                    window.scrollTo(0, 0);
+                    if (!url) {
+                        url = "/" + content_type + "/" + data.id;
+                    }
+                    show_preview(url);
                 }
             });
         }
