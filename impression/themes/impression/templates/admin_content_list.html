@@ -23,7 +23,7 @@
                             {% for content in contents %}
                             <tr>
                                 <td>
-                                    <a href="/admin_pages/edit/{{ content.id }}">{{ content.title }}</a>
+                                    <a href="/admin/{{ content.type }}s/edit/{{ content.id }}">{{ content.title }}</a>
                                 </td>
                                 <td>
                                     {{ content.parser }}

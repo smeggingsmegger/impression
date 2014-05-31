@@ -68,81 +68,84 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-markdown.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-html.js"></script>
 <script type="text/javascript">
-    var editor = ace.edit("body");
-    editor.setTheme("ace/theme/monokai");
-    {% if content_parser == "mediawiki" %}
-        editor.getSession().setMode("ace/mode/text");
-    {% else %}
-        editor.getSession().setMode("ace/mode/{{ content.parser }}");
-    {% endif %}
-    $("#content-parser").change(function() {
-        var optionSelected = $("option:selected", this);
-        var valueSelected = this.value;
-        if (valueSelected !== "mediawiki") {
-            editor.getSession().setMode("ace/mode/" + valueSelected);
-        }
-        else {
+    var impression_URL = parseURL(window.location.href);
+    console.log(impression_URL);
+
+    $(function () {
+        var editor = ace.edit("body");
+        editor.setTheme("ace/theme/monokai");
+        {% if content.parser == "mediawiki" %}
             editor.getSession().setMode("ace/mode/text");
-        }
-    });
-    function save_content(showPreview) {
-        body = editor.getValue();
-        title = $('#title').val();
-        content_parser = $('#content-parser').val();
-        created_on = $('#created-on').val();
-        published = $('#published').is(':checked');
-        content_type = "{{ content.type }}";
-        user_id = "{{ user.id }}";
-        var submit = {
-            'body': body,
-            'title': title,
-            'user_id': user_id,
-            'parser': content_parser,
-            'published': published,
-            'created_on': created_on,
-            'type': content_type
-        };
-
-        var editing = false;
-
-        if (window.location.href.indexOf("edit") !== -1) {
-            var url_parts = window.location.href.replace(/\/\s*$/,'').split('/');
-            var index = url_parts.length - 1;
-            submit.id = url_parts[index];
-            editing = true;
-        }
-
-        $.post("/content_create",
-            submit
-        ).done(function( data ) {
-            if (data.success === true && editing === false) {
-                window.location.href = "/admin_pages/edit/" + data.id;
+        {% else %}
+            editor.getSession().setMode("ace/mode/{{ content.parser }}");
+        {% endif %}
+        $("#content-parser").change(function() {
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
+            if (valueSelected !== "mediawiki") {
+                editor.getSession().setMode("ace/mode/" + valueSelected);
             }
-            $.bootbar.show(data.messages[0], { autoDismiss: true });
-            if (showPreview) {
-                $("#preview-iframe").height($("#page-wrapper").height() - $("#navigation-bar").height());
-                $("#preview-iframe").width($("#edit-window").width());
-                $("#preview-iframe").attr("src", "/page/" + data.id);
-                $("#preview-div").show();
-                $("#edit-window").hide();
-                window.scrollTo(0, 0);
+            else {
+                editor.getSession().setMode("ace/mode/text");
             }
         });
-    }
-    $("#close-preview").click(function(e) {
-        e.preventDefault();
-        $("#preview-div").hide();
-        $("#edit-window").show();
-        $("#preview-iframe").height(0);
-        $("#preview-iframe").width(0);
-    });
-    $("#preview").click(function(e) {
-        e.preventDefault();
-        save_content(true);
-    });
-    $("#save").click(function(e) {
-        e.preventDefault();
-        save_content();
+        function save_content(showPreview) {
+            body = editor.getValue();
+            title = $('#title').val();
+            content_parser = $('#content-parser').val();
+            created_on = $('#created-on').val();
+            published = $('#published').is(':checked');
+            content_type = impression_URL.segments[1].substring(0, 4);
+            user_id = "{{ user.id }}";
+            var submit = {
+                'body': body,
+                'title': title,
+                'user_id': user_id,
+                'parser': content_parser,
+                'published': published,
+                'created_on': created_on,
+                'type': content_type
+            };
+
+            var editing = false;
+
+            if (impression_URL.segments[2] === "edit") {
+                submit.id = impression_URL.segments[3];
+                editing = true;
+            }
+
+            $.post("/content_create",
+                submit
+            ).done(function( data ) {
+                if (data.success === true && editing === false) {
+                    window.location.href = "/admin/" + impression_URL.segments[1] + "/edit/" + data.id;
+                }
+                $.bootbar.show(data.messages[0], { autoDismiss: true });
+                if (showPreview) {
+                    $("#preview-iframe").height($("#page-wrapper").height() - $("#navigation-bar").height());
+                    $("#preview-iframe").width($("#edit-window").width());
+                    $("#preview-iframe").attr("src", "/" + content_type + "/" + data.id);
+                    $("#preview-div").show();
+                    $("#edit-window").hide();
+                    window.scrollTo(0, 0);
+                }
+            });
+        }
+        $("#close-preview").click(function(e) {
+            e.preventDefault();
+            $("#preview-div").hide();
+            $("#edit-window").show();
+            $("#preview-iframe").height(0);
+            $("#preview-iframe").width(0);
+        });
+        $("#preview").click(function(e) {
+            e.preventDefault();
+            save_content(true);
+        });
+        $("#save").click(function(e) {
+            e.preventDefault();
+            save_content();
+        });
     });
 </script>
 {% endblock javascript %}

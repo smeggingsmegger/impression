@@ -1,5 +1,6 @@
 import os
 from dateutil import parser
+from datetime import datetime
 
 from flask import redirect, request, url_for, g, jsonify, send_from_directory, flash, session
 # from flask import request, redirect, url_for, g, session, jsonify
@@ -220,37 +221,45 @@ def delete_user():
 '''
 ADMIN ROUTES
 '''
-@app.route('/admin_pages/add', methods=['GET'])
+@app.route('/admin/pages/add', methods=['GET'])
 @admin_required
 def admin_pages_add():
     content = Content()
+    content.created_on = datetime.now()
+    content.body = ''
+    content.title = ''
+    content.parser = 'markdown'
     return render('admin_content.html', user=g.user, content_type="Page", action="Add", content=content)
 
-@app.route('/admin_pages/edit/<string:content_id>', methods=['GET'])
+@app.route('/admin/pages/edit/<string:content_id>', methods=['GET'])
 @admin_required
 def admin_pages_edit(content_id):
     content = Content.get(content_id)
     return render('admin_content.html', user=g.user, content_type=content.type, action="Edit", content=content)
 
-@app.route('/admin_pages', methods=['GET'])
+@app.route('/admin/pages', methods=['GET'])
 @admin_required
 def admin_pages_list():
     contents = Content.filter(Content.type == 'page').all()
     return render('admin_content_list.html', contents=contents, content_type="Pages")
 
-@app.route('/admin_posts/add', methods=['GET'])
+@app.route('/admin/posts/add', methods=['GET'])
 @admin_required
 def admin_posts_add():
     content = Content()
+    content.created_on = datetime.now()
+    content.body = ''
+    content.title = ''
+    content.parser = 'markdown'
     return render('admin_content.html', user=g.user, content_type="Post", action="Add", content=content)
 
-@app.route('/admin_posts/edit/<string:content_id>', methods=['GET'])
+@app.route('/admin/posts/edit/<string:content_id>', methods=['GET'])
 @admin_required
 def admin_posts_edit(content_id):
     content = Content.get(content_id)
     return render('admin_content.html', user=g.user, content_type=content.type, action="Edit", content=content)
 
-@app.route('/admin_posts', methods=['GET'])
+@app.route('/admin/posts', methods=['GET'])
 @admin_required
 def admin_posts_list():
     contents = Content.filter(Content.type == 'post').all()

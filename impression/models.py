@@ -51,6 +51,10 @@ class Content(OurMixin, db.Model):
     def human_created_on(self):
         return self.created_on.strftime("%m/%d/%Y %I:%M %p")
 
+    @property
+    def parsed(self):
+        return self.parse()
+
     def parse(self):
         content = ''
         if self.parser == 'html':
