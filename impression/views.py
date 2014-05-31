@@ -1,10 +1,11 @@
 import os
+from dateutil import parser
 
 from flask import redirect, request, url_for, g, jsonify, send_from_directory, flash, session
 # from flask import request, redirect, url_for, g, session, jsonify
 
 from impression import app
-from impression.controls import render, admin_required, key_or_admin_required, get_payload
+from impression.controls import render, admin_required, key_or_admin_required, get_payload, make_slug
 from impression.mixin import paginate, results_to_dict, safe_commit
 from impression.models import User, Content, File
 from impression.utils import success, failure
@@ -49,6 +50,20 @@ def uploaded_file(filename):
 '''
 CONTENT ROUTES
 '''
+@app.route('/page/<string:content_id>', methods=['GET'])
+def render_page(content_id):
+    content = Content.get(content_id)
+    if not content:
+        content = Content.filter(Content.slug == content_id).first()
+    return render('page.html', user=g.user, content=content)
+
+@app.route('/post/<string:content_id>', methods=['GET'])
+def render_post(content_id):
+    content = Content.get(content_id)
+    if not content:
+        content = Content.filter(Content.slug == content_id).first()
+    return render('post.html', user=g.user, content=content)
+
 @app.route('/content_create', methods=['POST'])
 @key_or_admin_required
 def create_content():
@@ -68,7 +83,14 @@ def create_content():
     content.body = payload.get('body')
     content.user_id = payload.get('user_id')
     content.parser = payload.get('parser', 'markdown')
-    content.published = payload.get('published', False)
+    content.published = bool(payload.get('published', False))
+
+    if not editing:
+        content.slug = make_slug(content.title)
+    else:
+        created_on = payload.get('created_on')
+        if created_on:
+            content.created_on = parser.parse(created_on)
 
     valid = content.validate()
     if valid['success'] or editing:
@@ -201,19 +223,32 @@ ADMIN ROUTES
 @app.route('/admin_pages/add', methods=['GET'])
 @admin_required
 def admin_pages_add():
-    return render('admin_content.html', user=g.user, content_type="Page", action="Add", body='', title='', content_parser='markdown')
+    content = Content()
+    return render('admin_content.html', user=g.user, content_type="Page", action="Add", content=content)
 
 @app.route('/admin_pages/edit/<string:content_id>', methods=['GET'])
 @admin_required
 def admin_pages_edit(content_id):
     content = Content.get(content_id)
-    return render('admin_content.html', user=g.user, content_type=content.type, action="Edit", body=content.body, title=content.title, content_parser=content.parser)
+    return render('admin_content.html', user=g.user, content_type=content.type, action="Edit", content=content)
 
 @app.route('/admin_pages', methods=['GET'])
 @admin_required
 def admin_pages_list():
     contents = Content.filter(Content.type == 'page').all()
     return render('admin_content_list.html', contents=contents, content_type="Pages")
+
+@app.route('/admin_posts/add', methods=['GET'])
+@admin_required
+def admin_posts_add():
+    content = Content()
+    return render('admin_content.html', user=g.user, content_type="Post", action="Add", content=content)
+
+@app.route('/admin_posts/edit/<string:content_id>', methods=['GET'])
+@admin_required
+def admin_posts_edit(content_id):
+    content = Content.get(content_id)
+    return render('admin_content.html', user=g.user, content_type=content.type, action="Edit", content=content)
 
 @app.route('/admin_posts', methods=['GET'])
 @admin_required

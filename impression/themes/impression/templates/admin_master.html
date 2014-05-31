@@ -40,13 +40,17 @@
     <script src="{{ theme_static('js/jquery-1.11.0.min.js') }}"></script>
     <script src="{{ theme_static('js/bootstrap.min.js') }}"></script>
     <script src="{{ theme_static('js/bootbar.min.js') }}"></script>
+    <script src="{{ theme_static('js/moment.min.js') }}"></script>
+    <script src="{{ theme_static('js/bootstrap-datetimepicker.min.js') }}"></script>
     <script src="{{ theme_static('js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
 
     <!-- SB Admin Scripts - Include with every page -->
     <script src="{{ theme_static('js/sb-admin.js') }}"></script>
     <script type=text/javascript>
     /* window.setTimeout(function() { $(".alert").fadeOut('slow'); }, 4000); */
-    /* $('.date-field').datepicker(); */
+    $(function () {
+        $('.datetime-field').datetimepicker();
+    });
     </script>
     {% block javascript %}{% endblock javascript %}
 

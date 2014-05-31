@@ -1,4 +1,5 @@
 # import sys
+import re
 from functools import wraps
 
 from impression import app
@@ -15,7 +16,7 @@ Misc functions that do things like get the current theme and render templates.
 def make_slug(title, delimiter='-'):
     slug = delimiter.join([w for w in re.sub('[^\w ]', '', title.replace('-', ' ')).lower().split(' ') if w])
     count = Content.filter(Content.slug == slug).count()
-    slug = slug if not count else "{0}{1}{2}".format(slug, delimiter, count)
+    slug = slug if count == 0 else "{0}{1}{2}".format(slug, delimiter, count)
     return slug
 
 def is_slug(slug):

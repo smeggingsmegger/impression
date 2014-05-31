@@ -16,7 +16,7 @@
                                 <th>Title</th>
                                 <th>Type</th>
                                 <th>Published</th>
-                                <th>When Published</th>
+                                <th>Created</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -32,7 +32,7 @@
                                     {{ content.published }}
                                 </td>
                                 <td>
-                                    {{ content.published_on }}
+                                    {{ content.human_created_on() }}
                                 </td>
                             </tr>
                             {% endfor %}

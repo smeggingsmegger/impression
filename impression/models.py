@@ -28,6 +28,7 @@ class Content(OurMixin, db.Model):
     type = db.Column(db.Enum('post', 'page'), nullable=False)
     parser = db.Column(db.Enum('markdown', 'html', 'textile', 'mediawiki'), nullable=False, default='markdown')
     url = db.Column(db.VARCHAR(length=256))
+    slug = db.Column(db.VARCHAR(length=512))
     body = db.Column(db.TEXT())
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship("User", cascade='delete')
@@ -46,6 +47,9 @@ class Content(OurMixin, db.Model):
             return_value['messages'].append("A title is required to create a post or a page.")
 
         return return_value
+
+    def human_created_on(self):
+        return self.created_on.strftime("%m/%d/%Y %I:%M %p")
 
     def parse(self):
         content = ''
