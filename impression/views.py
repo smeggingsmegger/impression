@@ -63,7 +63,11 @@ def upload_file(payload, ufile):
                 width, height = im.size
                 im.thumbnail(size, Image.ANTIALIAS)
                 file, ext = os.path.splitext(path)
-                im.save(file + "_thumbnail" + ext.lower(), ext.replace(".", ""))
+                ext = ext.lower()
+                etype = ext.replace(".", "")
+                if etype == 'jpg':
+                    etype = 'jpeg'
+                im.save(file + "_thumbnail" + ext, etype)
             except (ImportError, IOError):
                 width = 0
                 height = 0
