@@ -41,6 +41,9 @@
                                 <label for="body">Body</label>
                                 <div id="body" style="border-radius: 5px; width: 100%; height: 100%; min-height: 500px;">{{ content.body }}</div>
                             </div>
+                            <div id="tags-div" class="form-group">
+                                <input class="form-control tags" id="tags" name="tags" value="{{ content.tags }}" placeholder="Add tags" type="text" />
+                            </div>
                             <button id="save" class="btn btn-success">Save</button>
                             <button id="preview" class="btn btn-primary">Preview</button>
                             <button id="help" class="btn btn-default">Help</button>
@@ -70,9 +73,19 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-html.js"></script>
 <script type="text/javascript">
     var impression_URL = parseURL(window.location.href);
-    console.log(impression_URL);
-
     $(function () {
+        var elt = $('#tags-div > input');
+
+        elt.tagsinput({
+            confirmKeys: [13, 9, 188]
+        });
+        elt.tagsinput('input').typeahead({
+            prefetch: '/get_tags'
+        }).bind('typeahead:selected', $.proxy(function (obj, datum) {  
+            this.tagsinput('add', datum.value);
+            this.tagsinput('input').typeahead('setQuery', '');
+        }, elt));
+
         var editor = ace.edit("body");
         editor.setTheme("ace/theme/monokai");
         {% if content.parser == "mediawiki" %}
@@ -80,10 +93,10 @@
         {% else %}
             editor.getSession().setMode("ace/mode/{{ content.parser }}");
         {% endif %}
+
         $("#help").click(function(e) {
             e.preventDefault();
             var parser = $("content-parser").val();
-            console.log(parser);
             var url = "http://daringfireball.net/projects/markdown/syntax";
             if (parser === "textile") {
                 url = "http://redcloth.org/hobix.com/textile/quick.html";
@@ -119,6 +132,7 @@
             title = $('#title').val();
             content_parser = $('#content-parser').val();
             created_on = $('#created-on').val();
+            tags = $('#tags').val();
             published = $('#published').is(':checked');
             content_type = impression_URL.segments[1].substring(0, 4);
             user_id = "{{ user.id }}";
@@ -127,6 +141,7 @@
                 'title': title,
                 'user_id': user_id,
                 'parser': content_parser,
+                'tags': tags,
                 'published': published,
                 'created_on': created_on,
                 'type': content_type

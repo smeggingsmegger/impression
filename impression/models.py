@@ -30,6 +30,7 @@ class Content(OurMixin, db.Model):
     url = db.Column(db.VARCHAR(length=256))
     slug = db.Column(db.VARCHAR(length=512))
     body = db.Column(db.TEXT())
+    tags = db.Column(db.TEXT())
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship("User", cascade='delete')
     published = db.Column(db.Boolean(), default=False, server_default='0')
@@ -86,6 +87,12 @@ class Setting(OurMixin, db.Model):
         Gets the value as the proper type.
         """
         return __builtins__[self.type](self.value)
+
+class Tag(OurMixin, db.Model):
+    __tablename__ = 'tags'
+
+    id = db.Column(db.VARCHAR(length=36), primary_key=True)
+    name = db.Column(db.VARCHAR(length=64), nullable=False)
 
 class RoleType(OurMixin, db.Model):
     __tablename__ = 'role_types'

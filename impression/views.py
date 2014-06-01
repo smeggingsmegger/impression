@@ -1,4 +1,5 @@
 import os
+import json
 from dateutil import parser
 from datetime import datetime
 
@@ -8,7 +9,7 @@ from flask import redirect, request, url_for, g, jsonify, send_from_directory, f
 from impression import app
 from impression.controls import render, admin_required, key_or_admin_required, get_payload, make_slug
 from impression.mixin import paginate, results_to_dict, safe_commit
-from impression.models import User, Content, File
+from impression.models import User, Content, File, Tag
 from impression.utils import success, failure
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -78,6 +79,11 @@ def uploaded_file(filename):
     path = os.path.abspath("./" + app.config['UPLOAD_FOLDER'])
     return send_from_directory(path, filename)
 
+@app.route('/get_tags', methods=['GET'])
+def get_tags():
+    tags = [t.name for t in Tag.all()]
+    return json.dumps(tags)
+
 '''
 CONTENT ROUTES
 '''
@@ -113,6 +119,14 @@ def create_content():
     content.title = payload.get('title')
     content.body = payload.get('body')
     content.user_id = payload.get('user_id')
+    tags = [t.strip() for t in payload.get('tags', '').split(',') if t.strip()]
+    for tag in tags:
+        count = Tag.filter(Tag.name == tag).count()
+        if not count:
+            new_tag = Tag(name=tag)
+            new_tag.insert()
+
+    content.tags = ",".join(tags)
     content.parser = payload.get('parser', 'markdown')
     content.published = bool(payload.get('published', False))
 
@@ -269,6 +283,7 @@ def admin_pages_add():
     content.created_on = datetime.now()
     content.body = ''
     content.title = ''
+    content.tags = ''
     content.parser = 'markdown'
     return render('admin_content.html', user=g.user, content_type="Page", action="Add", content=content)
 
@@ -291,6 +306,7 @@ def admin_posts_add():
     content.created_on = datetime.now()
     content.body = ''
     content.title = ''
+    content.tags = ''
     content.parser = 'markdown'
     return render('admin_content.html', user=g.user, content_type="Post", action="Add", content=content)
 
