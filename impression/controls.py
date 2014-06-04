@@ -13,6 +13,13 @@ from itsdangerous import TimestampSigner, SignatureExpired
 '''
 Misc functions that do things like get the current theme and render templates.
 '''
+def get_setting(name, default):
+    setting = Setting.filter(Setting.name == name).first()
+    if setting:
+        return setting.val
+    else:
+        return default
+
 def make_slug(title, delimiter='-'):
     slug = delimiter.join([w for w in re.sub('[^\w ]', '', title.replace('-', ' ')).lower().split(' ') if w])
     count = Content.filter(Content.slug == slug).count()

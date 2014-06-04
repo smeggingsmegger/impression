@@ -20,6 +20,17 @@ class Log(OurMixin, db.Model):
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship("User", cascade='delete')
 
+class CustomField(OurMixin, db.Model):
+    __tablename__ = 'custom_fields'
+
+    id = db.Column(db.VARCHAR(length=36), primary_key=True)
+    content_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('content.id', ondelete='CASCADE'), nullable=False)
+    content = db.relationship("Content", backref="contents", cascade='delete')
+    type = db.Column(db.VARCHAR(length=64), nullable=False)
+    key = db.Column(db.VARCHAR(length=256), nullable=False)
+    value = db.Column(db.TEXT(), nullable=False)
+    sort_order = db.Column(db.Integer(), default=1000, server_default='1000')
+
 class Content(OurMixin, db.Model):
     __tablename__ = 'content'
 
@@ -28,6 +39,8 @@ class Content(OurMixin, db.Model):
     type = db.Column(db.Enum('post', 'page'), nullable=False)
     parser = db.Column(db.Enum('markdown', 'html', 'textile', 'mediawiki'), nullable=False, default='markdown')
     url = db.Column(db.VARCHAR(length=256))
+    header_image = db.Column(db.VARCHAR(length=256))
+    preview = db.Column(db.TEXT())
     slug = db.Column(db.VARCHAR(length=512))
     body = db.Column(db.TEXT())
     tags = db.Column(db.TEXT())
@@ -52,9 +65,28 @@ class Content(OurMixin, db.Model):
     def human_created_on(self):
         return self.created_on.strftime("%m/%d/%Y %I:%M %p")
 
+    def human_published_on(self):
+        return self.published_on.strftime("%m/%d/%Y %I:%M %p")
+
     @property
     def parsed(self):
         return self.parse()
+
+    def parse_preview(self):
+        content = ''
+        if self.parser == 'html':
+            content = self.preview
+        elif self.parser == 'markdown':
+            import markdown
+            content = markdown.markdown(self.preview)
+        elif self.parser == 'textile':
+            import textile
+            content = textile.textile(self.preview)
+        elif self.parser == 'mediawiki':
+            from creole import creole2html
+            content = creole2html(unicode(self.preview))
+
+        return content
 
     def parse(self):
         content = ''

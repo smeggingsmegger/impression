@@ -26,8 +26,8 @@
                                     </select>
                                 </div>
                                 <div class="col-xs-4 datetime-field">
-                                    <label for="created-on">Created</label>
-                                    <input class="form-control" id="created-on" name="created_on" value="{{ content.human_created_on() }}" />
+                                    <label for="published-on">Published</label>
+                                    <input class="form-control" id="published-on" name="published_on" value="{{ content.human_published_on() }}" />
                                 </div>
                                 <div class="col-xs-2">
                                     <br />
@@ -86,6 +86,10 @@
             this.tagsinput('input').typeahead('setQuery', '');
         }, elt));
 
+        $('.tt-query').blur(function(e) {
+            input = $(e.target);
+            input.val('');
+        });
         var editor = ace.edit("body");
         editor.setTheme("ace/theme/monokai");
         {% if content.parser == "mediawiki" %}
@@ -131,7 +135,7 @@
             body = editor.getValue();
             title = $('#title').val();
             content_parser = $('#content-parser').val();
-            created_on = $('#created-on').val();
+            published_on = $('#published-on').val();
             tags = $('#tags').val();
             published = $('#published').is(':checked');
             content_type = impression_URL.segments[1].substring(0, 4);
@@ -143,7 +147,7 @@
                 'parser': content_parser,
                 'tags': tags,
                 'published': published,
-                'created_on': created_on,
+                'published_on': published_on,
                 'type': content_type
             };
 

@@ -7,7 +7,7 @@ from flask import redirect, request, url_for, g, jsonify, send_from_directory, f
 # from flask import request, redirect, url_for, g, session, jsonify
 
 from impression import app
-from impression.controls import render, admin_required, key_or_admin_required, get_payload, make_slug
+from impression.controls import render, admin_required, key_or_admin_required, get_payload, make_slug, get_setting
 from impression.mixin import paginate, results_to_dict, safe_commit
 from impression.models import User, Content, File, Tag
 from impression.utils import success, failure
@@ -20,7 +20,19 @@ All routes go here.
 '''
 @app.route('/', methods=['GET'])
 def index():
-    return render('index.html', user=g.user)
+    return redirect('/blog/')
+
+@app.route('/blog', methods=['GET'])
+@app.route('/blog/', methods=['GET'])
+@app.route('/blog/<int:page>', methods=['GET'])
+def blog_index(page=1):
+    limit = get_setting("posts-per-page", 1)
+    posts = Content.filter(Content.published == True)\
+                   .filter(Content.type == "post")\
+                   .order_by(Content.published_on.desc())\
+
+    posts, max_pages = paginate(posts, page, limit)
+    return render('index.html', user=g.user, posts=posts, current_page=page, max_pages=max_pages)
 
 '''
 IMAGE ROUTES
@@ -132,14 +144,15 @@ def create_content():
 
     content.tags = ",".join(tags)
     content.parser = payload.get('parser', 'markdown')
-    content.published = bool(payload.get('published', False))
+    published = json.loads(payload.get('published', 'false'))
+    content.published = published
 
     if not editing:
         content.slug = make_slug(content.title)
     else:
-        created_on = payload.get('created_on')
-        if created_on:
-            content.created_on = parser.parse(created_on)
+        published_on = payload.get('published_on')
+        if published_on:
+            content.published_on = parser.parse(published_on)
 
     valid = content.validate()
     if valid['success'] or editing:
@@ -284,7 +297,7 @@ def admin_files_add():
 @admin_required
 def admin_pages_add():
     content = Content()
-    content.created_on = datetime.now()
+    content.published_on = datetime.now()
     content.body = ''
     content.title = ''
     content.tags = ''
@@ -307,7 +320,7 @@ def admin_pages_list():
 @admin_required
 def admin_posts_add():
     content = Content()
-    content.created_on = datetime.now()
+    content.published_on = datetime.now()
     content.body = ''
     content.title = ''
     content.tags = ''
