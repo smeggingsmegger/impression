@@ -7,7 +7,7 @@ from flask import redirect, request, url_for, g, jsonify, send_from_directory, f
 # from flask import request, redirect, url_for, g, session, jsonify
 
 from impression import app
-from impression.controls import render, admin_required, key_or_admin_required, get_payload, make_slug, get_setting
+from impression.controls import render, render_admin, admin_required, key_or_admin_required, get_payload, make_slug, get_setting
 from impression.mixin import paginate, results_to_dict, safe_commit
 from impression.models import User, Content, File, Tag
 from impression.utils import success, failure
@@ -286,12 +286,12 @@ ADMIN ROUTES
 @admin_required
 def admin_files_list():
     files = File.all()
-    return render('admin_files_list.html', files=files)
+    return render_admin('files_list.html', files=files)
 
 @app.route('/admin/files/add', methods=['GET'])
 @admin_required
 def admin_files_add():
-    return render('admin_file.html')
+    return render_admin('file.html')
 
 @app.route('/admin/pages/add', methods=['GET'])
 @admin_required
@@ -302,19 +302,19 @@ def admin_pages_add():
     content.title = ''
     content.tags = ''
     content.parser = 'markdown'
-    return render('admin_content.html', user=g.user, content_type="Page", action="Add", content=content)
+    return render_admin('content.html', user=g.user, content_type="Page", action="Add", content=content)
 
 @app.route('/admin/pages/edit/<string:content_id>', methods=['GET'])
 @admin_required
 def admin_pages_edit(content_id):
     content = Content.get(content_id)
-    return render('admin_content.html', user=g.user, content_type=content.type, action="Edit", content=content)
+    return render_admin('content.html', user=g.user, content_type=content.type, action="Edit", content=content)
 
 @app.route('/admin/pages', methods=['GET'])
 @admin_required
 def admin_pages_list():
     contents = Content.filter(Content.type == 'page').all()
-    return render('admin_content_list.html', contents=contents, content_type="Pages")
+    return render_admin('content_list.html', contents=contents, content_type="Pages")
 
 @app.route('/admin/posts/add', methods=['GET'])
 @admin_required
@@ -325,36 +325,36 @@ def admin_posts_add():
     content.title = ''
     content.tags = ''
     content.parser = 'markdown'
-    return render('admin_content.html', user=g.user, content_type="Post", action="Add", content=content)
+    return render_admin('content.html', user=g.user, content_type="Post", action="Add", content=content)
 
 @app.route('/admin/posts/edit/<string:content_id>', methods=['GET'])
 @admin_required
 def admin_posts_edit(content_id):
     content = Content.get(content_id)
-    return render('admin_content.html', user=g.user, content_type=content.type, action="Edit", content=content)
+    return render_admin('content.html', user=g.user, content_type=content.type, action="Edit", content=content)
 
 @app.route('/admin/posts', methods=['GET'])
 @admin_required
 def admin_posts_list():
     contents = Content.filter(Content.type == 'post').all()
-    return render('admin_content_list.html', contents=contents, content_type="Posts")
+    return render_admin('content_list.html', contents=contents, content_type="Posts")
 
 @app.route('/admin', methods=['GET'])
 @app.route('/admin/', methods=['GET'])
 @admin_required
 def admin():
-    return render('admin_index.html', user=g.user)
+    return render_admin('index.html', user=g.user)
 
 @app.route('/logout', methods=['GET'])
 def logout():
     session['userid'] = None
-    return render('login.html')
+    return render_admin('login.html')
 
 @app.route('/login', methods=['GET'])
 def login():
     if g.user and g.user.admin:
         return redirect(url_for('admin'))
-    return render('login.html')
+    return render_admin('login.html')
 
 @app.route('/post_login', methods=['POST'])
 def post_login():

@@ -1,0 +1,9 @@
+{
+    "application": "impression",
+    "identifier": "admin",
+    "name": "Impression Admin",
+    "author": "Scott Blevins",
+    "license": "BSD",
+    "description": "Theme for the administration section",
+    "version": "1.0.0"
+}

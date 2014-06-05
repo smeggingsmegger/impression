@@ -53,8 +53,18 @@
     <script src="{{ theme_static('js/sb-admin.js') }}"></script>
     <script type=text/javascript>
     window.setTimeout(function() { $(".alert").fadeOut('slow'); }, 5000);
+    var impression_URL = parseURL(window.location.href);
     $(function () {
         $('.datetime-field').datetimepicker();
+        if (impression_URL.segments[1] == "posts") {
+            $("#posts-a").trigger("click");
+        }
+        else if (impression_URL.segments[1] == "pages") {
+            $("#pages-a").trigger("click");
+        }
+        else if (impression_URL.segments[1] == "files") {
+            $("#files-a").trigger("click");
+        }
     });
     </script>
     {% block javascript %}{% endblock javascript %}

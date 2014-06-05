@@ -143,6 +143,12 @@ def render(template, **context):
     return render_theme_template(get_current_theme(app, g), template, **context)
 
 '''
+This is a special render that allows us to use themes.
+'''
+def render_admin(template, **context):
+    return render_theme_template(get_theme('admin'), template, **context)
+
+'''
 Before we process any request, let's do some things.
 '''
 @app.before_request

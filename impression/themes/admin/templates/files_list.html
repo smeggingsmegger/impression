@@ -1,38 +1,42 @@
-{% extends theme("admin_master.html") %}
+{% extends theme("master.html") %}
 
 {% block title %} - Administration{% endblock %}
 
 {% block content %}
     <div id="wrapper">
-        {% include theme("admin_menu.html") %}
+        {% include theme("menu.html") %}
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Listing {{ content_type }}</h1>
-                    {% if contents %}
+                    <h1 class="page-header">Listing Files</h1>
+                    {% if files %}
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Title</th>
-                                <th>Type</th>
-                                <th>Published</th>
-                                <th>Created</th>
+                                <th>Name</th>
+                                <th>Width</th>
+                                <th>Height</th>
+                                <th>Size</th>
+                                <th>URL</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for content in contents %}
+                            {% for file in files %}
                             <tr>
                                 <td>
-                                    <a href="/admin/{{ content.type }}s/edit/{{ content.id }}">{{ content.title }}</a>
+                                    {{ file.name }}
                                 </td>
                                 <td>
-                                    {{ content.parser }}
+                                    {{ file.width }}
                                 </td>
                                 <td>
-                                    {{ content.published }}
+                                    {{ file.height }}
                                 </td>
                                 <td>
-                                    {{ content.human_created_on() }}
+                                    {{ file.size }}
+                                </td>
+                                <td>
+                                    <a href="/uploads/{{ file.name }}">/uploads/{{ file.name }}</a>
                                 </td>
                             </tr>
                             {% endfor %}
