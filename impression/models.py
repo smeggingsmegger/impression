@@ -2,7 +2,7 @@
 from datetime import datetime
 
 from impression import db
-from mixin import OurMixin
+from impression.mixin import OurMixin
 from impression.utils import success #, failure
 
 class ApiKey(OurMixin, db.Model):
