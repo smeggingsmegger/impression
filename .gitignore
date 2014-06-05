@@ -54,3 +54,6 @@ docs/_build/
 
 # Test DB
 test.db
+
+# Cache Files
+cache

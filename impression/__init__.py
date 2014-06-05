@@ -1,6 +1,7 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.themes2 import Themes
+from flask.ext.cache import Cache
 # from flask.ext.mail import Mail
 
 import os
@@ -19,6 +20,7 @@ else:
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 app.secret_key = os.urandom(24)
+cache = Cache(app, config={'CACHE_TYPE': 'filesystem', 'CACHE_DIR': 'cache'})
 
 Themes(app)
 

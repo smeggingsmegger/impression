@@ -10,3 +10,4 @@ textile
 python-creole
 python-dateutil
 pillow
+flask-cache

@@ -6,7 +6,7 @@ from datetime import datetime
 from flask import redirect, request, url_for, g, jsonify, send_from_directory, flash, session
 # from flask import request, redirect, url_for, g, session, jsonify
 
-from impression import app
+from impression import app, cache
 from impression.controls import render, render_admin, admin_required, key_or_admin_required, get_payload, make_slug, get_setting
 from impression.mixin import paginate, results_to_dict, safe_commit
 from impression.models import User, Content, File, Tag
@@ -99,6 +99,22 @@ def uploaded_file(filename):
 def get_tags():
     tags = [t.name for t in Tag.all()]
     return json.dumps(tags)
+
+@app.route('/get_tags_in_use', methods=['GET'])
+@cache.cached(timeout=50)
+def get_tags_in_use():
+    all_tags = {}
+    contents = Content.filter(Content.published == True).all()
+    for content in contents:
+        tags = [t.strip() for t in content.tags.split(',') if t.strip()]
+        for tag in tags:
+            tag_count = all_tags.get(tag, 0)
+            if tag_count:
+                all_tags[tag] += 1
+            else:
+                all_tags[tag] = 1
+
+    return json.dumps(all_tags)
 
 '''
 CONTENT ROUTES
