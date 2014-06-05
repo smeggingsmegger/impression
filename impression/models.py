@@ -45,6 +45,7 @@ class Content(OurMixin, db.Model):
     body = db.Column(db.TEXT())
     tags = db.Column(db.TEXT())
     menu_item = db.Column(db.Boolean(), default=False, server_default='0')
+    template = db.Column(db.VARCHAR(length=256), default="post.html")
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship("User", cascade='delete')
     published = db.Column(db.Boolean(), default=False, server_default='0')

@@ -15,6 +15,8 @@ from impression.utils import success, failure, chunks
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
+CACHE_TIMEOUT = get_setting('cache-timeout', 60)
+
 '''
 All routes go here.
 '''
@@ -28,10 +30,12 @@ def index():
 @app.route('/tags/<tag>', methods=['GET'])
 @app.route('/tags/<tag>/<int:page>', methods=['GET'])
 def blog_index(page=1, tag=None):
+    tag_chunks = []
     tags = json.loads(get_tags_in_use())
-    if len(tags) > 16:
-        tags = tags[:16]
-    tag_chunks = chunks(tags, 4)
+    if tags:
+        if len(tags) > 16:
+            tags = tags[:16]
+        tag_chunks = chunks(tags, 4)
     limit = get_setting("posts-per-page", 4)
     posts = Content.filter(Content.published == True)\
                    .filter(Content.type == "post")\
@@ -110,7 +114,7 @@ def get_tags():
     return json.dumps(tags)
 
 @app.route('/get_tags_in_use', methods=['GET'])
-@cache.cached(timeout=50)
+@cache.cached(timeout=CACHE_TIMEOUT)
 def get_tags_in_use():
     all_tags = {}
     contents = Content.filter(Content.published == True).all()
@@ -127,7 +131,7 @@ def get_tags_in_use():
 
     return json.dumps(all_tags)
 
-# @cache.cached(timeout=50)
+@cache.memoize(timeout=CACHE_TIMEOUT)
 def get_menu_items():
     items = []
     contents = Content.filter(Content.menu_item == True).filter(Content.published == True).all()
@@ -144,18 +148,20 @@ def render_page(content_id):
     content = Content.get(content_id)
     if not content:
         content = Content.filter(Content.slug == content_id).first()
-    return render('page.html', user=g.user, content=content)
+    return render(content.template, user=g.user, content=content, menu_items=get_menu_items())
 
 @app.route('/post/<string:content_id>', methods=['GET'])
 def render_post(content_id):
+    tag_chunks = []
     tags = json.loads(get_tags_in_use())
-    if len(tags) > 16:
-        tags = tags[:16]
-    tag_chunks = chunks(tags, 4)
+    if tags:
+        if len(tags) > 16:
+            tags = tags[:16]
+        tag_chunks = chunks(tags, 4)
     content = Content.get(content_id)
     if not content:
         content = Content.filter(Content.slug == content_id).first()
-    return render('post.html', user=g.user, content=content, tag_chunks=tag_chunks, menu_items=get_menu_items())
+    return render(content.template, user=g.user, content=content, tag_chunks=tag_chunks, menu_items=get_menu_items())
 
 @app.route('/content_create', methods=['POST'])
 @key_or_admin_required
