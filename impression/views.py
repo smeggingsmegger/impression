@@ -10,7 +10,7 @@ from impression import app, cache
 from impression.controls import render, render_admin, admin_required, key_or_admin_required, get_payload, make_slug, get_setting
 from impression.mixin import paginate, results_to_dict, safe_commit
 from impression.models import User, Content, File, Tag
-from impression.utils import success, failure
+from impression.utils import success, failure, chunks
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -25,14 +25,23 @@ def index():
 @app.route('/blog', methods=['GET'])
 @app.route('/blog/', methods=['GET'])
 @app.route('/blog/<int:page>', methods=['GET'])
-def blog_index(page=1):
-    limit = get_setting("posts-per-page", 1)
+@app.route('/tags/<tag>', methods=['GET'])
+@app.route('/tags/<tag>/<int:page>', methods=['GET'])
+def blog_index(page=1, tag=None):
+    tags = json.loads(get_tags_in_use())
+    if len(tags) > 16:
+        tags = tags[:16]
+    tag_chunks = chunks(tags, 4)
+    limit = get_setting("posts-per-page", 4)
     posts = Content.filter(Content.published == True)\
                    .filter(Content.type == "post")\
-                   .order_by(Content.published_on.desc())\
+                   .order_by(Content.published_on.desc())
+
+    if tag:
+        posts = posts.filter(Content.tags.contains(tag))
 
     posts, max_pages = paginate(posts, page, limit)
-    return render('index.html', user=g.user, posts=posts, current_page=page, max_pages=max_pages)
+    return render('index.html', user=g.user, posts=posts, current_page=page, max_pages=max_pages, tag_chunks=tag_chunks, tag=tag, menu_items=get_menu_items())
 
 '''
 IMAGE ROUTES
@@ -114,7 +123,18 @@ def get_tags_in_use():
             else:
                 all_tags[tag] = 1
 
+    all_tags = sorted(all_tags, key=all_tags.get, reverse=True)
+
     return json.dumps(all_tags)
+
+# @cache.cached(timeout=50)
+def get_menu_items():
+    items = []
+    contents = Content.filter(Content.menu_item == True).filter(Content.published == True).all()
+    for content in contents:
+        items.append({'title': content.title, 'slug': content.slug})
+
+    return items
 
 '''
 CONTENT ROUTES
@@ -128,10 +148,14 @@ def render_page(content_id):
 
 @app.route('/post/<string:content_id>', methods=['GET'])
 def render_post(content_id):
+    tags = json.loads(get_tags_in_use())
+    if len(tags) > 16:
+        tags = tags[:16]
+    tag_chunks = chunks(tags, 4)
     content = Content.get(content_id)
     if not content:
         content = Content.filter(Content.slug == content_id).first()
-    return render('post.html', user=g.user, content=content)
+    return render('post.html', user=g.user, content=content, tag_chunks=tag_chunks, menu_items=get_menu_items())
 
 @app.route('/content_create', methods=['POST'])
 @key_or_admin_required
@@ -160,8 +184,12 @@ def create_content():
 
     content.tags = ",".join(tags)
     content.parser = payload.get('parser', 'markdown')
+
     published = json.loads(payload.get('published', 'false'))
     content.published = published
+
+    menu_item = json.loads(payload.get('menu_item', 'false'))
+    content.menu_item = menu_item
 
     if not editing:
         content.slug = make_slug(content.title)

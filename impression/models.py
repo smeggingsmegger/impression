@@ -44,6 +44,7 @@ class Content(OurMixin, db.Model):
     slug = db.Column(db.VARCHAR(length=512))
     body = db.Column(db.TEXT())
     tags = db.Column(db.TEXT())
+    menu_item = db.Column(db.Boolean(), default=False, server_default='0')
     user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship("User", cascade='delete')
     published = db.Column(db.Boolean(), default=False, server_default='0')
@@ -70,37 +71,26 @@ class Content(OurMixin, db.Model):
 
     @property
     def parsed(self):
-        return self.parse()
+        return self.parse('body')
 
-    def parse_preview(self):
+    @property
+    def previewed(self):
+        return self.parse('preview')
+
+    def parse(self, to_parse):
         content = ''
+        value = getattr(self, to_parse)
         if self.parser == 'html':
-            content = self.preview
+            content = value
         elif self.parser == 'markdown':
             import markdown
-            content = markdown.markdown(self.preview, extensions=['codehilite', 'fenced_code'])
+            content = markdown.markdown(value, extensions=['codehilite', 'fenced_code'])
         elif self.parser == 'textile':
             import textile
-            content = textile.textile(self.preview)
+            content = textile.textile(value)
         elif self.parser == 'mediawiki':
             from creole import creole2html
-            content = creole2html(unicode(self.preview))
-
-        return content
-
-    def parse(self):
-        content = ''
-        if self.parser == 'html':
-            content = self.body
-        elif self.parser == 'markdown':
-            import markdown
-            content = markdown.markdown(self.body, extensions=['codehilite', 'fenced_code'])
-        elif self.parser == 'textile':
-            import textile
-            content = textile.textile(self.body)
-        elif self.parser == 'mediawiki':
-            from creole import creole2html
-            content = creole2html(unicode(self.body))
+            content = creole2html(unicode(value))
 
         return content
 

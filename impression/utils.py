@@ -15,6 +15,10 @@ def failure(message=None):
     else:
         return {'messages': [], 'success': False}
 
+def chunks(my_list, num_chunks):
+    for index in xrange(0, len(my_list), num_chunks):
+        yield my_list[index:index+num_chunks]+['']*(num_chunks-(len(my_list)-index))
+
 def generate_hash(length=64):
     return hashlib.sha224(str(random.getrandbits(256))).hexdigest()[0:length]
 

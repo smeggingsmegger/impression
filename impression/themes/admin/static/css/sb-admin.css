@@ -3,7 +3,6 @@
 /* ------------------------------- */
 
  body {
-    background-color: #f8f8f8;
     padding-top: 100px;
 }
 
@@ -11,6 +10,18 @@
     body {
         padding-top: 50px;
     }
+}
+
+.dropdown-toggle {
+    color: #fff !important;
+}
+
+.dropdown-toggle:hover {
+    color: #333 !important;
+}
+
+.open > .dropdown-toggle {
+    color: #333 !important;
 }
 
 /* Wrappers */
@@ -24,7 +35,6 @@
 #page-wrapper {
     padding: 0 15px;
     min-height: 568px;
-    background-color: #fff;
 }
 
 @media(min-width:768px) {

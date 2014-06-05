@@ -155,6 +155,7 @@ Before we process any request, let's do some things.
 def before_request():
     g.user = None
     g.theme = 'impression'
+    g.bootstrap_theme = get_setting('bootstrap-theme', 'flatly')
 
     if 'userid' in session:
         g.user = User.get(session['userid'])
