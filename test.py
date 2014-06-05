@@ -5,7 +5,10 @@ from random import randrange
 from sys import hexversion
 
 import impression
-from cStringIO import StringIO
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 from impression.mixin import safe_commit
 from impression.models import User, ApiKey, Content, File
