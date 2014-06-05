@@ -31,4 +31,4 @@ db = SQLAlchemy(app)
 # mail = Mail(app)
 
 if not os.environ.get('RUNNING_ALEMBIC'):
-    import views
+    import impression.views
