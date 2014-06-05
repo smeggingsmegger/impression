@@ -78,7 +78,7 @@ class Content(OurMixin, db.Model):
             content = self.preview
         elif self.parser == 'markdown':
             import markdown
-            content = markdown.markdown(self.preview)
+            content = markdown.markdown(self.preview, extensions=['codehilite', 'fenced_code'])
         elif self.parser == 'textile':
             import textile
             content = textile.textile(self.preview)
@@ -94,7 +94,7 @@ class Content(OurMixin, db.Model):
             content = self.body
         elif self.parser == 'markdown':
             import markdown
-            content = markdown.markdown(self.body)
+            content = markdown.markdown(self.body, extensions=['codehilite', 'fenced_code'])
         elif self.parser == 'textile':
             import textile
             content = textile.textile(self.body)
