@@ -10,17 +10,22 @@ from flask.ext.themes2 import get_theme, render_theme_template
 
 from itsdangerous import TimestampSigner, SignatureExpired
 
+from sqlalchemy.exc import OperationalError
 '''
 Misc functions that do things like get the current theme and render templates.
 '''
 
 @cache.memoize(timeout=3600)
 def get_setting(name, default):
-    setting = Setting.filter(Setting.name == name).first()
-    if setting and setting.val is not None and setting.val is not "":
-        return setting.val
-    else:
-        return default
+    try:
+        setting = Setting.filter(Setting.name == name).first()
+        if setting and setting.val is not None and setting.val is not "":
+            return setting.val
+        else:
+            return default
+    except OperationalError:
+        # Fix for running tests
+        return None
 
 def make_slug(title, delimiter='-'):
     slug = delimiter.join([w for w in re.sub('[^\w ]', '', title.replace('-', ' ')).lower().split(' ') if w])
