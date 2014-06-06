@@ -84,6 +84,8 @@ def upload():
 def upload_file(payload, ufile):
     if ufile and allowed_file(ufile.filename):
         filename = secure_filename(ufile.filename)
+        thumbnail_name = ''
+        thumbnail_path = ''
         path = os.path.join(".", app.config['UPLOAD_FOLDER'], filename)
         if not os.path.isfile(path):
             ufile.save(path)
@@ -95,16 +97,20 @@ def upload_file(payload, ufile):
                 width, height = im.size
                 im.thumbnail(size, Image.ANTIALIAS)
                 file, ext = os.path.splitext(path)
+                fname, fext = os.path.splitext(filename)
                 ext = ext.lower()
                 etype = ext.replace(".", "")
                 if etype == 'jpg':
                     etype = 'jpeg'
-                im.save(file + "_thumbnail" + ext, etype)
+                thumbnail_path = file + "_thumbnail" + ext
+                thumbnail_name = fname + "_thumbnail" + ext
+                im.save(thumbnail_path, etype)
             except (ImportError, IOError):
                 width = 0
                 height = 0
 
-            afile = File(name=filename, user_id=payload.get('user_id'), path=path, size=os.path.getsize(path), width=width, height=height, mimetype=ufile.mimetype)
+            afile = File(name=filename, path=path, thumbnail_name=thumbnail_name, thumbnail_path=thumbnail_path,\
+                         user_id=payload.get('user_id'), size=os.path.getsize(path), width=width, height=height, mimetype=ufile.mimetype)
             afile.insert()
             safe_commit()
             return afile.id
@@ -364,6 +370,31 @@ def admin_files_list():
 def admin_files_add():
     return render_admin('file.html')
 
+@app.route('/admin/files/delete', methods=['POST'])
+@admin_required
+def admin_files_delete():
+    return_value = success('The file has been deleted.')
+    payload = get_payload(request)
+    afile = File.get(payload.get('id'))
+    if afile:
+        try:
+            os.unlink(afile.path)
+        except OSError:
+            pass
+        try:
+            os.unlink(afile.thumbnail_path)
+        except OSError:
+            pass
+        afile.delete()
+        safe_commit()
+
+        with app.app_context():
+            cache.clear()
+    else:
+        return_value = failure('File not found.')
+
+    return jsonify(return_value)
+
 @app.route('/admin/pages/add', methods=['GET'])
 @admin_required
 def admin_pages_add():
@@ -449,6 +480,23 @@ def admin_profile_post():
 def admin_settings():
     settings = Setting.all()
     return render_admin('settings.html', settings=settings)
+
+@app.route('/admin/content/delete', methods=['POST'])
+@admin_required
+def admin_content_delete():
+    return_value = success('The content has been deleted.')
+    payload = get_payload(request)
+    content = Content.get(payload.get('id'))
+    if content:
+        content.delete()
+        safe_commit()
+
+        with app.app_context():
+            cache.clear()
+    else:
+        return_value = failure('Content not found.')
+
+    return jsonify(return_value)
 
 @app.route('/admin/settings/post', methods=['POST'])
 @admin_required

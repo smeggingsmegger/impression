@@ -85,6 +85,7 @@ class impressionTestCase(unittest.TestCase):
             'title': 'This is a test page',
             'body': 'Blah blah blah',
             'type': 'post',
+            'published': 1,
             'user_id': self.user.id
         }
         # Try to create the content with no API key

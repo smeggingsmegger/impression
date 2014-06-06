@@ -41,6 +41,7 @@
     <script src="{{ theme_static('js/jquery-1.11.0.min.js') }}"></script>
     <script src="{{ theme_static('js/bootstrap.min.js') }}"></script>
     <script src="{{ theme_static('js/bootbar.min.js') }}"></script>
+    <script src="{{ theme_static('js/bootbox.min.js') }}"></script>
     <script src="{{ theme_static('js/moment.min.js') }}"></script>
     <script src="{{ theme_static('js/bootstrap-tagsinput.min.js') }}"></script>
     <script src="{{ theme_static('js/utils.js') }}"></script>
@@ -64,6 +65,10 @@
         }
         else if (impression_URL.segments[1] == "files") {
             $("#files-a").trigger("click");
+        }
+        var focus_field = $('.focus');
+        if (focus_field[0]) {
+            focus_field[0].focus();
         }
     });
     </script>

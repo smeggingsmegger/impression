@@ -47,8 +47,8 @@ class Content(OurMixin, db.Model):
     tags = db.Column(db.TEXT())
     menu_item = db.Column(db.Boolean(), default=False, server_default='0')
     template = db.Column(db.VARCHAR(length=256), default="post.html")
-    user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = db.relationship("User", cascade='delete')
+    user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship("User")
     published = db.Column(db.Boolean(), default=False, server_default='0')
     published_on = db.Column(db.DateTime(), nullable=False, default=datetime.now)
 
@@ -143,11 +143,13 @@ class File(OurMixin, db.Model):
     id = db.Column(db.VARCHAR(length=36), primary_key=True)
     name = db.Column(db.VARCHAR(length=256), nullable=False)
     path = db.Column(db.VARCHAR(length=512), nullable=True)
+    thumbnail_name = db.Column(db.VARCHAR(length=256), nullable=False)
+    thumbnail_path = db.Column(db.VARCHAR(length=512), nullable=True)
     width = db.Column(db.Integer(), default=0, server_default='0')
     height = db.Column(db.Integer(), default=0, server_default='0')
     size = db.Column(db.Integer(), default=0, server_default='0')
-    user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = db.relationship("User", cascade='delete')
+    user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship("User")
     mimetype = db.Column(db.VARCHAR(length=256), nullable=False)
 
 class User(OurMixin, db.Model):
@@ -180,7 +182,7 @@ class UserRole(OurMixin, db.Model):
     __tablename__ = 'user_roles'
 
     id = db.Column(db.VARCHAR(length=36), primary_key=True)
-    user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = db.relationship("User", backref="user_roles")
+    user_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship("User")
     role_type_id = db.Column(db.VARCHAR(length=36), db.ForeignKey('role_types.id', ondelete='CASCADE'), nullable=True)
     role_type = db.relationship("RoleType", backref="user_roles")

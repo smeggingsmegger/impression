@@ -158,6 +158,7 @@ def before_request():
     g.user = None
     g.theme = 'impression'
     g.bootstrap_theme = get_setting('bootstrap-theme', 'yeti')
+    g.syntax_highlighting_theme = get_setting('syntax-highlighting-theme', 'monokai.css')
     g.get_setting = get_setting
 
     if 'userid' in session:
