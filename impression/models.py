@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+import json
 from datetime import datetime
 
 from impression import db
@@ -100,9 +101,23 @@ class Setting(OurMixin, db.Model):
 
     id = db.Column(db.VARCHAR(length=36), primary_key=True)
     name = db.Column(db.VARCHAR(length=128), nullable=False)
-    value = db.Column(db.Text, nullable=False)
+    human_name = db.Column(db.TEXT(), nullable=True, default='', server_default='')
+    value = db.Column(db.TEXT(), nullable=True, default='', server_default='')
     type = db.Column(db.Enum('int', 'str', 'bool', 'float'), nullable=False)
     allowed = db.Column(db.Text, nullable=True)
+    system = db.Column(db.Boolean(), default=False, server_default='0')
+    description = db.Column(db.TEXT(), nullable=True, default='', server_default='')
+
+    @property
+    def title(self):
+        if self.human_name:
+            return self.human_name
+        else:
+            return self.name.replace('-', ' ').title()
+
+    @property
+    def choices(self):
+        return json.loads(self.allowed)
 
     @property
     def val(self):

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import json
 import shlex
 import subprocess
 
@@ -35,8 +36,16 @@ def main():
     hashed_password = generate_password_hash('testy21')
 
     # Create a user to update and delete later.
-    user = User(name="Test User", email='test@test.com', admin=True, openid='', password=hashed_password)
-    user.insert()
+    User(name="Test User", email='test@test.com', admin=True, openid='', password=hashed_password).insert()
+
+    # Available Themes
+    themes = ['amelia', 'cerulean', 'cosmo', 'cyborg', 'darkly', 'flatly', 'lumen', 'readable', 'simplex', 'slate', 'spacelab', 'superhero', 'united', 'yeti']
+
+    # Create some system settings
+    Setting(name='blog-title', type='str', system=True).insert()
+    Setting(name='blog-copyright', type='str', system=True).insert()
+    Setting(name='cache-timeout', type='int', system=True, value=0).insert()
+    Setting(name='bootstrap-theme', type='str', system=True, value='flatly', allowed=json.dumps(themes)).insert()
 
     safe_commit()
 

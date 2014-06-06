@@ -2,7 +2,7 @@
 import re
 from functools import wraps
 
-from impression import app
+from impression import app, cache
 from impression.models import Setting, ApiKey, User, Content
 
 from flask import request, redirect, url_for, g, jsonify, session
@@ -13,6 +13,8 @@ from itsdangerous import TimestampSigner, SignatureExpired
 '''
 Misc functions that do things like get the current theme and render templates.
 '''
+
+@cache.memoize(timeout=3600)
 def get_setting(name, default):
     setting = Setting.filter(Setting.name == name).first()
     if setting:
@@ -156,6 +158,7 @@ def before_request():
     g.user = None
     g.theme = 'impression'
     g.bootstrap_theme = get_setting('bootstrap-theme', 'flatly')
+    g.get_setting = get_setting
 
     if 'userid' in session:
         g.user = User.get(session['userid'])

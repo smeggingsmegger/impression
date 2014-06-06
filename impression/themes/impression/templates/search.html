@@ -1,0 +1,40 @@
+{% extends theme("master.html") %}
+
+{% block title %} - Search Results{% endblock %}
+
+{% block content %}
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Search Results</h1>
+                {% if contents %}
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Published</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for content in contents %}
+                            <tr>
+                                <td>
+                                    <a href="/{{ content.type }}/{{ content.slug }}">{{ content.title }}</a>
+                                </td>
+                                <td>
+                                    {{ content.human_published_on() }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                <p>No results found.</p>
+                {% endif %}
+            </div>
+        </div>
+
+{% endblock content %}
+
+{% block javascript %}
+{% endblock javascript %}

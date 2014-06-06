@@ -19,6 +19,3 @@ DEFAULT_THEME = 'impression'
 UPLOAD_FOLDER = 'uploads/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'tiff'])
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024
-
-# Available Themes
-THEMES = ['amelia', 'cerulean', 'cosmo', 'cyborg', 'darkly', 'flatly', 'lumen', 'readable', 'simplex', 'slate', 'spacelab', 'superhero', 'united', 'yeti']

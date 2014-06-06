@@ -2,6 +2,7 @@ import os
 import json
 from dateutil import parser
 from datetime import datetime
+from sqlalchemy import or_#, and_
 
 from flask import redirect, request, url_for, g, jsonify, send_from_directory, flash, session
 # from flask import request, redirect, url_for, g, session, jsonify
@@ -9,7 +10,7 @@ from flask import redirect, request, url_for, g, jsonify, send_from_directory, f
 from impression import app, cache
 from impression.controls import render, render_admin, admin_required, key_or_admin_required, get_payload, make_slug, get_setting
 from impression.mixin import paginate, results_to_dict, safe_commit
-from impression.models import User, Content, File, Tag
+from impression.models import User, Content, File, Tag, Setting
 from impression.utils import success, failure, chunks
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -143,6 +144,17 @@ def get_menu_items():
 '''
 CONTENT ROUTES
 '''
+@app.route('/search', methods=['POST'])
+def search_page():
+    payload = get_payload(request)
+    search = payload.get('search')
+    contents = Content.filter(or_(Content.body.ilike('%{}%'.format(search)),\
+                                  Content.tags.ilike('%{}%'.format(search)),\
+                                  Content.title.ilike('%{}%'.format(search))))\
+                      .filter(Content.published == True)\
+                      .all()
+    return render('search.html', user=g.user, contents=contents, menu_items=get_menu_items())
+
 @app.route('/page/<string:content_id>', methods=['GET'])
 def render_page(content_id):
     content = Content.get(content_id)
@@ -352,6 +364,7 @@ def admin_pages_add():
     content.title = ''
     content.tags = ''
     content.parser = 'markdown'
+    content.type = 'page'
     return render_admin('content.html', user=g.user, content_type="Page", action="Add", content=content)
 
 @app.route('/admin/pages/edit/<string:content_id>', methods=['GET'])
@@ -375,6 +388,7 @@ def admin_posts_add():
     content.title = ''
     content.tags = ''
     content.parser = 'markdown'
+    content.type = 'post'
     return render_admin('content.html', user=g.user, content_type="Post", action="Add", content=content)
 
 @app.route('/admin/posts/edit/<string:content_id>', methods=['GET'])
@@ -388,6 +402,30 @@ def admin_posts_edit(content_id):
 def admin_posts_list():
     contents = Content.filter(Content.type == 'post').all()
     return render_admin('content_list.html', contents=contents, content_type="Posts")
+
+@app.route('/admin/settings', methods=['GET'])
+@admin_required
+def admin_settings():
+    settings = Setting.all()
+    return render_admin('settings.html', settings=settings)
+
+@app.route('/admin/settings/post', methods=['POST'])
+@admin_required
+def admin_settings_post():
+    return_value = success('All settings have been updated.')
+    payload = get_payload(request)
+
+    for key in payload:
+        setting = Setting.filter(Setting.name == key).first()
+        setting.value = payload[key]
+        setting.insert()
+
+    safe_commit()
+
+    with app.app_context():
+        cache.clear()
+
+    return jsonify(return_value)
 
 @app.route('/admin', methods=['GET'])
 @app.route('/admin/', methods=['GET'])
