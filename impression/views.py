@@ -5,6 +5,7 @@ from datetime import datetime
 from sqlalchemy import or_#, and_
 
 from flask import redirect, request, url_for, g, jsonify, send_from_directory, flash, session
+from jinja2.exceptions import TemplateNotFound
 # from flask import request, redirect, url_for, g, session, jsonify
 
 from impression import app, cache
@@ -26,7 +27,10 @@ All routes go here.
 def index():
     custom_front_page = get_setting('custom-front-page', '')
     if custom_front_page:
-        return render(custom_front_page)
+        try:
+            return render(custom_front_page)
+        except TemplateNotFound:
+            return render("error.html", title="Custom Front Page", error="You have configured a custom front page but the file ({}) was not found in your theme's template directory.".format(custom_front_page))
 
     return redirect('/blog/')
 

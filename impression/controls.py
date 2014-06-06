@@ -17,7 +17,7 @@ Misc functions that do things like get the current theme and render templates.
 @cache.memoize(timeout=3600)
 def get_setting(name, default):
     setting = Setting.filter(Setting.name == name).first()
-    if setting:
+    if setting and setting.val is not None and setting.val is not "":
         return setting.val
     else:
         return default
@@ -159,7 +159,8 @@ def before_request():
     g.theme = 'impression'
     g.bootstrap_theme = get_setting('bootstrap-theme', 'yeti')
     g.syntax_highlighting_theme = get_setting('syntax-highlighting-theme', 'monokai.css')
-    g.get_setting = get_setting
+    g.blog_title = get_setting('blog-title', 'Blog Title')
+    g.blog_copyright = get_setting('blog-copyright', 'Blog Copyright')
 
     if 'userid' in session:
         g.user = User.get(session['userid'])

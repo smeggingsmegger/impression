@@ -46,8 +46,10 @@ def main():
     Setting(name='blog-title', type='str', system=True).insert()
     Setting(name='blog-copyright', type='str', system=True).insert()
     Setting(name='cache-timeout', type='int', system=True, value=0).insert()
+    Setting(name='posts-per-page', type='int', system=True, value=4).insert()
     Setting(name='bootstrap-theme', type='str', system=True, value='yeti', allowed=json.dumps(themes)).insert()
     Setting(name='syntax-highlighting-theme', type='str', system=True, value='monokai.css', allowed=json.dumps(syntax_themes)).insert()
+    Setting(name='custom-front-page', type='str', system=True).insert()
 
     safe_commit()
 
