@@ -11,7 +11,7 @@ except ImportError:
     from io import StringIO
 
 from impression.mixin import safe_commit
-from impression.models import User, ApiKey, Content, File
+from impression.models import User, ApiKey, Content, File, Setting
 
 from itsdangerous import TimestampSigner
 
@@ -50,6 +50,19 @@ class impressionTestCase(unittest.TestCase):
         # Create a user to update and delete later.
         self.user = User(name="Test User", email='test_user@impression.com', admin=True, openid='', password=hashed_password)
         self.user.insert()
+
+        # Available Themes
+        themes = ['Stock Bootstrap 3', 'amelia', 'cerulean', 'cosmo', 'cyborg', 'darkly', 'flatly', 'lumen', 'readable', 'simplex', 'slate', 'spacelab', 'superhero', 'united', 'yeti']
+        syntax_themes = ['autumn.css', 'borland.css', 'bw.css', 'colorful.css', 'default.css', 'emacs.css', 'friendly.css', 'fruity.css', 'github.css', 'manni.css', 'monokai.css', 'murphy.css', 'native.css', 'pastie.css', 'perldoc.css', 'tango.css', 'trac.css', 'vim.css', 'vs.css', 'zenburn.css']
+
+        # Create some system settings
+        Setting(name='blog-title', type='str', system=True).insert()
+        Setting(name='blog-copyright', type='str', system=True).insert()
+        Setting(name='cache-timeout', type='int', system=True, value=0).insert()
+        Setting(name='posts-per-page', type='int', system=True, value=4).insert()
+        Setting(name='bootstrap-theme', type='str', system=True, value='yeti', allowed=json.dumps(themes)).insert()
+        Setting(name='syntax-highlighting-theme', type='str', system=True, value='monokai.css', allowed=json.dumps(syntax_themes)).insert()
+        Setting(name='custom-front-page', type='str', system=True).insert()
 
         safe_commit()
 
