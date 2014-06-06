@@ -143,7 +143,7 @@ class File(OurMixin, db.Model):
     id = db.Column(db.VARCHAR(length=36), primary_key=True)
     name = db.Column(db.VARCHAR(length=256), nullable=False)
     path = db.Column(db.VARCHAR(length=512), nullable=True)
-    thumbnail_name = db.Column(db.VARCHAR(length=256), nullable=False)
+    thumbnail_name = db.Column(db.VARCHAR(length=256), nullable=True)
     thumbnail_path = db.Column(db.VARCHAR(length=512), nullable=True)
     width = db.Column(db.Integer(), default=0, server_default='0')
     height = db.Column(db.Integer(), default=0, server_default='0')

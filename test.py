@@ -4,11 +4,12 @@ import os
 from random import randrange
 from sys import hexversion
 
-import impression
 try:
     from cStringIO import StringIO
 except ImportError:
     from io import StringIO
+
+import impression
 
 from impression.mixin import safe_commit
 from impression.models import User, ApiKey, Content, File, Setting
@@ -30,6 +31,7 @@ warnings.simplefilter("ignore")
 class impressionTestCase(unittest.TestCase):
 
     def setUp(self):
+        impression.app.config["CACHE_TYPE"] = "null"
         # Use memory DB
         impression.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
         impression.app.config['TESTING'] = True
@@ -71,6 +73,10 @@ class impressionTestCase(unittest.TestCase):
 
     def test_upload(self):
         filename = 'test.txt'
+        the_file = os.path.join(impression.app.config['UPLOAD_FOLDER'], filename)
+        if os.path.isfile(the_file):
+            os.unlink(the_file)
+
         post_data = {
             'file': (StringIO("This is a test file."), filename),
             'name': 'Test File',
@@ -79,11 +85,10 @@ class impressionTestCase(unittest.TestCase):
         rv = self.app.post('/upload_ajax', data=post_data, follow_redirects=True)
         self.assertEquals(rv.status_code, 200)
         data = json.loads(rv.data)
+        print(data)
         self.assertEquals(data['messages'][0], 'The file was uploaded.')
         afile = File.get(data['id'])
         self.assertEquals(data['id'], afile.id)
-        the_file = os.path.join(impression.app.config['UPLOAD_FOLDER'], filename)
-
         self.assertTrue(os.path.isfile(the_file))
 
         # Delete the file we uploaded

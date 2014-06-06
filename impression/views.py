@@ -117,7 +117,7 @@ def upload_file(payload, ufile):
                          user_id=payload.get('user_id'), size=os.path.getsize(path), width=width, height=height, mimetype=ufile.mimetype)
             afile.insert()
             safe_commit()
-            return afile.id
+        return afile.id
     return None
 
 @app.route('/uploads/<filename>')
