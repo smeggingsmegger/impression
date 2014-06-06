@@ -39,7 +39,7 @@ def main():
     User(name="Test User", email='test@test.com', admin=True, openid='', password=hashed_password).insert()
 
     # Available Themes
-    themes = ['amelia', 'cerulean', 'cosmo', 'cyborg', 'darkly', 'flatly', 'lumen', 'readable', 'simplex', 'slate', 'spacelab', 'superhero', 'united', 'yeti']
+    themes = ['Stock Bootstrap 3', 'amelia', 'cerulean', 'cosmo', 'cyborg', 'darkly', 'flatly', 'lumen', 'readable', 'simplex', 'slate', 'spacelab', 'superhero', 'united', 'yeti']
 
     # Create some system settings
     Setting(name='blog-title', type='str', system=True).insert()

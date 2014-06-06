@@ -65,6 +65,7 @@ $(function () {
         content_parser = $('#content-parser').val();
         published_on = $('#published-on').val();
         tags = $('#tags').val();
+        page_layout = $('#page-layout').val();
         published = $('#published').is(':checked');
         menu_item = $('#menu-item').is(':checked');
         content_type = impression_URL.segments[1].substring(0, 4);
@@ -78,6 +79,7 @@ $(function () {
             'published': published,
             'menu_item': menu_item,
             'published_on': published_on,
+            'page_layout': page_layout,
             'type': content_type
         };
 
