@@ -30,7 +30,8 @@ warnings.simplefilter("ignore")
 class impressionTestCase(unittest.TestCase):
 
     def setUp(self):
-        impression.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+        # Use memory DB
+        impression.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
         impression.app.config['TESTING'] = True
         self.app = impression.app.test_client()
 
