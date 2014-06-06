@@ -22,7 +22,12 @@ CACHE_TIMEOUT = get_setting('cache-timeout', 60)
 All routes go here.
 '''
 @app.route('/', methods=['GET'])
+@cache.cached(timeout=CACHE_TIMEOUT)
 def index():
+    custom_front_page = get_setting('custom-front-page', '')
+    if custom_front_page:
+        return render(custom_front_page)
+
     return redirect('/blog/')
 
 @app.route('/blog', methods=['GET'])
@@ -30,6 +35,7 @@ def index():
 @app.route('/blog/<int:page>', methods=['GET'])
 @app.route('/tags/<tag>', methods=['GET'])
 @app.route('/tags/<tag>/<int:page>', methods=['GET'])
+@cache.cached(timeout=CACHE_TIMEOUT)
 def blog_index(page=1, tag=None):
     tag_chunks = []
     tags = json.loads(get_tags_in_use())
@@ -110,6 +116,7 @@ def uploaded_file(filename):
     return send_from_directory(path, filename)
 
 @app.route('/get_tags', methods=['GET'])
+@cache.cached(timeout=CACHE_TIMEOUT)
 def get_tags():
     tags = [t.name for t in Tag.all()]
     return json.dumps(tags)
@@ -156,6 +163,7 @@ def search_page():
     return render('search.html', user=g.user, contents=contents, menu_items=get_menu_items())
 
 @app.route('/page/<string:content_id>', methods=['GET'])
+@cache.cached(timeout=CACHE_TIMEOUT)
 def render_page(content_id):
     content = Content.get(content_id)
     if not content:
@@ -163,6 +171,7 @@ def render_page(content_id):
     return render(content.template, user=g.user, content=content, menu_items=get_menu_items())
 
 @app.route('/post/<string:content_id>', methods=['GET'])
+@cache.cached(timeout=CACHE_TIMEOUT)
 def render_post(content_id):
     tag_chunks = []
     tags = json.loads(get_tags_in_use())
@@ -407,6 +416,33 @@ def admin_posts_edit(content_id):
 def admin_posts_list():
     contents = Content.filter(Content.type == 'post').all()
     return render_admin('content_list.html', contents=contents, content_type="Posts")
+
+@app.route('/admin/users/profile', methods=['GET'])
+@admin_required
+def admin_profile():
+    return render_admin('user_profile.html')
+
+@app.route('/admin/users/profile/post', methods=['POST'])
+@admin_required
+def admin_profile_post():
+    return_value = success('All profile values have been updated.')
+    payload = get_payload(request)
+
+    for key in payload:
+        if key == 'password':
+            if payload[key]:
+                hashed_password = generate_password_hash(payload[key])
+                setattr(g.user, key, hashed_password)
+        else:
+            setattr(g.user, key, payload[key])
+
+    g.user.insert()
+    safe_commit()
+
+    with app.app_context():
+        cache.clear()
+
+    return jsonify(return_value)
 
 @app.route('/admin/settings', methods=['GET'])
 @admin_required
