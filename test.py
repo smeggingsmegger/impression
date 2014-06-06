@@ -40,12 +40,12 @@ class impressionTestCase(unittest.TestCase):
         # Drop and create DB.
         impression.db.drop_all(bind=[None])
         impression.db.create_all(bind=[None])
+        safe_commit()
 
         key = '{0:02X}'.format(randrange(36**50))
         self.api_key = ApiKey(key=key, name='test-key')
         self.api_key.insert()
         self.s = TimestampSigner(key)
-        safe_commit()
 
         hashed_password = generate_password_hash('password-123')
 
