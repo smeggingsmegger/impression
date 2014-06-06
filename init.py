@@ -45,7 +45,7 @@ def main():
     Setting(name='blog-title', type='str', system=True).insert()
     Setting(name='blog-copyright', type='str', system=True).insert()
     Setting(name='cache-timeout', type='int', system=True, value=0).insert()
-    Setting(name='bootstrap-theme', type='str', system=True, value='flatly', allowed=json.dumps(themes)).insert()
+    Setting(name='bootstrap-theme', type='str', system=True, value='yeti', allowed=json.dumps(themes)).insert()
 
     safe_commit()
 

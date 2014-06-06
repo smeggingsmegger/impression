@@ -365,6 +365,8 @@ def admin_pages_add():
     content.tags = ''
     content.parser = 'markdown'
     content.type = 'page'
+    content.user = g.user
+    content.user_id = g.user.id
     return render_admin('content.html', user=g.user, content_type="Page", action="Add", content=content)
 
 @app.route('/admin/pages/edit/<string:content_id>', methods=['GET'])
@@ -389,6 +391,9 @@ def admin_posts_add():
     content.tags = ''
     content.parser = 'markdown'
     content.type = 'post'
+    content.user = g.user
+    content.user_id = g.user.id
+
     return render_admin('content.html', user=g.user, content_type="Post", action="Add", content=content)
 
 @app.route('/admin/posts/edit/<string:content_id>', methods=['GET'])
