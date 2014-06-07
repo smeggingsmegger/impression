@@ -103,7 +103,7 @@ class Setting(OurMixin, db.Model):
     name = db.Column(db.VARCHAR(length=128), nullable=False)
     human_name = db.Column(db.TEXT(), nullable=True, default='', server_default='')
     value = db.Column(db.TEXT(), nullable=True, default='', server_default='')
-    type = db.Column(db.Enum('int', 'str', 'bool', 'float'), nullable=False)
+    vartype = db.Column(db.Enum('int', 'str', 'bool', 'float'), nullable=False)
     allowed = db.Column(db.Text, nullable=True)
     system = db.Column(db.Boolean(), default=False, server_default='0')
     description = db.Column(db.TEXT(), nullable=True, default='', server_default='')
@@ -124,7 +124,7 @@ class Setting(OurMixin, db.Model):
         """
         Gets the value as the proper type.
         """
-        return __builtins__[self.type](self.value)
+        return __builtins__[self.vartype](self.value)
 
 class Tag(OurMixin, db.Model):
     __tablename__ = 'tags'

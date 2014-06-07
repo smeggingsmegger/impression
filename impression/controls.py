@@ -154,18 +154,3 @@ This is a special render that allows us to use themes.
 '''
 def render_admin(template, **context):
     return render_theme_template(get_theme('admin'), template, **context)
-
-'''
-Before we process any request, let's do some things.
-'''
-@app.before_request
-def before_request():
-    g.user = None
-    g.theme = 'impression'
-    g.bootstrap_theme = get_setting('bootstrap-theme', 'yeti')
-    g.syntax_highlighting_theme = get_setting('syntax-highlighting-theme', 'monokai.css')
-    g.blog_title = get_setting('blog-title', 'Blog Title')
-    g.blog_copyright = get_setting('blog-copyright', 'Blog Copyright')
-
-    if 'userid' in session:
-        g.user = User.get(session['userid'])

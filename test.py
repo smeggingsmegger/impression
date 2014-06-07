@@ -62,13 +62,13 @@ class impressionTestCase(unittest.TestCase):
         syntax_themes = ['autumn.css', 'borland.css', 'bw.css', 'colorful.css', 'default.css', 'emacs.css', 'friendly.css', 'fruity.css', 'github.css', 'manni.css', 'monokai.css', 'murphy.css', 'native.css', 'pastie.css', 'perldoc.css', 'tango.css', 'trac.css', 'vim.css', 'vs.css', 'zenburn.css']
 
         # Create some system settings
-        Setting(name='blog-title', type='str', system=True).insert()
-        Setting(name='blog-copyright', type='str', system=True).insert()
-        Setting(name='cache-timeout', type='int', system=True, value=0).insert()
-        Setting(name='posts-per-page', type='int', system=True, value=4).insert()
-        Setting(name='bootstrap-theme', type='str', system=True, value='yeti', allowed=json.dumps(themes)).insert()
-        Setting(name='syntax-highlighting-theme', type='str', system=True, value='monokai.css', allowed=json.dumps(syntax_themes)).insert()
-        Setting(name='custom-front-page', type='str', system=True).insert()
+        Setting(name='blog-title', vartype='str', system=True).insert()
+        Setting(name='blog-copyright', vartype='str', system=True).insert()
+        Setting(name='cache-timeout', vartype='int', system=True, value=0).insert()
+        Setting(name='posts-per-page', vartype='int', system=True, value=4).insert()
+        Setting(name='bootstrap-theme', vartype='str', system=True, value='yeti', allowed=json.dumps(themes)).insert()
+        Setting(name='syntax-highlighting-theme', vartype='str', system=True, value='monokai.css', allowed=json.dumps(syntax_themes)).insert()
+        Setting(name='custom-front-page', vartype='str', system=True).insert()
 
         safe_commit()
 
