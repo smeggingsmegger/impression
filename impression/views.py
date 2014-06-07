@@ -6,7 +6,6 @@ from sqlalchemy import or_#, and_
 
 from flask import redirect, request, url_for, g, jsonify, send_from_directory, flash, session
 from jinja2.exceptions import TemplateNotFound
-# from flask import request, redirect, url_for, g, session, jsonify
 
 from impression import app, cache
 from impression.controls import render, render_admin, admin_required, key_or_admin_required, get_payload, make_slug, get_setting
@@ -17,7 +16,24 @@ from impression.utils import success, failure, chunks
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
-CACHE_TIMEOUT = get_setting('cache-timeout', 60)
+CACHE_TIMEOUT = 0
+
+'''
+Before we process any request, let's do some things.
+'''
+@app.before_request
+def before_request():
+    g.user = None
+    g.theme = 'impression'
+    g.bootstrap_theme = get_setting('bootstrap-theme', 'yeti')
+    g.syntax_highlighting_theme = get_setting('syntax-highlighting-theme', 'monokai.css')
+    g.blog_title = get_setting('blog-title', 'Blog Title')
+    g.blog_copyright = get_setting('blog-copyright', 'Blog Copyright')
+    global CACHE_TIMEOUT
+    CACHE_TIMEOUT = get_setting('cache-timeout', 0)
+
+    if 'userid' in session:
+        g.user = User.get(session['userid'])
 
 '''
 All routes go here.

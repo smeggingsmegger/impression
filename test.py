@@ -9,7 +9,7 @@ try:
 except ImportError:
     from io import StringIO
 
-import impression
+from impression import app, db
 
 from impression.mixin import safe_commit
 from impression.models import User, ApiKey, Content, File, Setting
@@ -28,18 +28,22 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 warnings.simplefilter("ignore")
 
+os.environ['RUNNING_TESTS'] = '1'
+
 class impressionTestCase(unittest.TestCase):
 
     def setUp(self):
-        impression.app.config["CACHE_TYPE"] = "null"
+        app.config["CACHE_TYPE"] = "null"
         # Use memory DB
-        impression.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
-        impression.app.config['TESTING'] = True
-        self.app = impression.app.test_client()
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+        app.config['TESTING'] = True
 
-        # Drop and create DB.
-        impression.db.drop_all(bind=[None])
-        impression.db.create_all(bind=[None])
+        self.app = app.test_client()
+
+        # Create DB.
+        db.drop_all()
+        db.create_all()
+
         safe_commit()
 
         key = '{0:02X}'.format(randrange(36**50))
@@ -69,11 +73,12 @@ class impressionTestCase(unittest.TestCase):
         safe_commit()
 
     def tearDown(self):
-        impression.db.drop_all(bind=[None])
+        db.drop_all()
+        db.session.commit()
 
     def test_upload(self):
         filename = 'test.txt'
-        the_file = os.path.join(impression.app.config['UPLOAD_FOLDER'], filename)
+        the_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         if os.path.isfile(the_file):
             os.unlink(the_file)
 
@@ -85,7 +90,6 @@ class impressionTestCase(unittest.TestCase):
         rv = self.app.post('/upload_ajax', data=post_data, follow_redirects=True)
         self.assertEquals(rv.status_code, 200)
         data = json.loads(rv.data)
-        print(data)
         self.assertEquals(data['messages'][0], 'The file was uploaded.')
         afile = File.get(data['id'])
         self.assertEquals(data['id'], afile.id)
