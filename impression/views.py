@@ -63,7 +63,9 @@ def blog_index(page=1, tag=None):
         if len(tags) > 16:
             tags = tags[:16]
         tag_chunks = chunks(tags, 4)
+
     limit = get_setting("posts-per-page", 4)
+
     posts = Content.filter(Content.published == True)\
                    .filter(Content.type == "post")\
                    .order_by(Content.published_on.desc())
@@ -471,7 +473,7 @@ def admin_posts_list():
 @app.route('/admin/users/profile', methods=['GET'])
 @admin_required
 def admin_profile():
-    return render_admin('user_profile.html')
+    return render_admin('user.html')
 
 @app.route('/admin/users/profile/post', methods=['POST'])
 @admin_required

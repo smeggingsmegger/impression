@@ -76,8 +76,8 @@ def paginate(query_object, current_page, pagesize):
     @return: A tuple containing the result then the maximum page number.
     """
 
-    pagesize = int(pagesize)
-    current_page = int(current_page)
+    pagesize = int(pagesize) if pagesize else 0
+    current_page = int(current_page) if current_page else 0
 
     if current_page <= 0:
         # The paginate function assumes that current_page's lower

@@ -1,0 +1,81 @@
+{% extends theme("master.html") %}
+
+{% block title %} - Users{% endblock %}
+
+{% block content %}
+    <div id="wrapper">
+        {% include theme("menu.html") %}
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Listing Users</h1>
+                    {% if users %}
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Administrator</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>
+                                    <a href="#" class="delete"><i id="{{ user.id }}" class="fa fa-trash-o"></i></a>
+                                </td>
+                                <td>
+                                    <a href="/admin/users/edit/{{ user.id }}">{{ user.name }}</a>
+                                </td>
+                                <td>
+                                    {{ user.email }}
+                                </td>
+                                <td>
+                                    {{ user.administrator }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p>There is nothing here yet.</p>
+                    {% endif %}
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+{% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript">
+$(".delete").click(function(e) {
+    bootbox.confirm("Are you sure you wish to delete this item?", function(result) {
+        if (result === true) {
+            var target = $(e.target)[0];
+            var parent = $($(e.target).parents('tr')[0]);
+            parent.slideUp();
+            submit = {
+                id: target.id
+            }
+            $.post("/admin/content/delete",
+                submit
+            ).done(function( data ) {
+                if (data.success === true) {
+                    $.bootbar.show(data.messages[0], { autoDismiss: true });
+                    parent.slideUp();
+                }
+                else {
+                    $.bootbar.danger(data.messages[0], { autoDismiss: true });
+                }
+            });
+        }
+    });
+});
+</script>
+{% endblock javascript %}

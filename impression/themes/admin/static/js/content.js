@@ -17,6 +17,7 @@ $(function () {
     });
     var editor = ace.edit("body");
     editor.setTheme("ace/theme/monokai");
+    editor.setOption("spellcheck", true)
     var parser = $("#content-parser option:selected").val();
 
     if (parser === "mediawiki") {

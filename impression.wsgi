@@ -1,7 +1,8 @@
 import sys
-from impression.config import SERVER_PATH
+import os
 
-sys.path.insert(0, SERVER_PATH)
+sys.path.append(os.path.abspath('.'))
+
 import logging
 
 from impression import app as application
