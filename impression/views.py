@@ -5,6 +5,7 @@ from datetime import datetime
 from sqlalchemy import or_#, and_
 
 from flask import redirect, request, url_for, g, jsonify, send_from_directory, flash, session
+from flask.ext.themes2 import get_themes_list
 from jinja2.exceptions import TemplateNotFound
 
 from impression import app, cache
@@ -534,7 +535,11 @@ def admin_users_edit_post():
 @app.route('/admin/settings', methods=['GET'])
 @admin_required
 def admin_settings():
+    available_themes =[x.identifier for x in get_themes_list() if x.identifier != 'admin']
     settings = Setting.all()
+    for setting in settings:
+        if setting.name == 'blog-theme':
+            setting.allowed = json.dumps(available_themes)
     return render_admin('settings.html', settings=settings)
 
 @app.route('/admin/content/delete', methods=['POST'])

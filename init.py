@@ -37,6 +37,7 @@ def main():
     # Create some system settings
     Setting(name='blog-title', vartype='str', system=True).insert()
     Setting(name='blog-copyright', vartype='str', system=True).insert()
+    Setting(name='blog-theme', vartype='str', system=True, value='impression').insert()
     Setting(name='cache-timeout', vartype='int', system=True, value=0).insert()
     Setting(name='posts-per-page', vartype='int', system=True, value=4).insert()
     Setting(name='bootstrap-theme', vartype='str', system=True, value='yeti', allowed=json.dumps(themes)).insert()
