@@ -101,6 +101,7 @@ class Setting(OurMixin, db.Model):
 
     id = db.Column(db.VARCHAR(length=36), primary_key=True)
     name = db.Column(db.VARCHAR(length=128), nullable=False)
+    section = db.Column(db.VARCHAR(length=128), nullable=False, default='main', server_default='main')
     human_name = db.Column(db.TEXT(), nullable=True, default='', server_default='')
     value = db.Column(db.TEXT(), nullable=True, default='', server_default='')
     vartype = db.Column(db.Enum('int', 'str', 'bool', 'float'), nullable=False)
