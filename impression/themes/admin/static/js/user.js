@@ -6,7 +6,7 @@ $(function () {
             element = $(elm);
             submit[element.attr('name')] = element.val();
         });
-        $.post("/admin/users/profile/post",
+        $.post("/admin/users/edit/post",
             submit
         ).done(function( data ) {
             $.bootbar.show(data.messages[0], { autoDismiss: true });

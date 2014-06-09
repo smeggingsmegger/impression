@@ -55,7 +55,7 @@
 {% block javascript %}
 <script type="text/javascript">
 $(".delete").click(function(e) {
-    bootbox.confirm("Are you sure you wish to delete this item?", function(result) {
+    bootbox.confirm("Are you sure you wish to delete this user?", function(result) {
         if (result === true) {
             var target = $(e.target)[0];
             var parent = $($(e.target).parents('tr')[0]);
@@ -63,7 +63,7 @@ $(".delete").click(function(e) {
             submit = {
                 id: target.id
             }
-            $.post("/admin/content/delete",
+            $.post("/admin/users/delete",
                 submit
             ).done(function( data ) {
                 if (data.success === true) {

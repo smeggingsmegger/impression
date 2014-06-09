@@ -34,6 +34,8 @@ def before_request():
 
     if 'userid' in session:
         g.user = User.get(session['userid'])
+        if not g.user.active:
+            g.user = None
 
 '''
 All routes go here.
@@ -360,7 +362,7 @@ def update_user():
 
     return jsonify(return_value)
 
-@app.route('/user_delete', methods=['POST'])
+@app.route('/admin/users/delete', methods=['POST'])
 @key_or_admin_required
 def delete_user():
     return_value = success('The user was deleted.')
@@ -369,7 +371,8 @@ def delete_user():
     if not g.user or g.user.id != payload.get('id'):
         user = User.filter(User.id == payload.get('id')).first()
         if user:
-            user.delete()
+            user.active = False
+            user.insert()
             safe_commit()
         else:
             return_value = failure('That user does not exist.')
@@ -470,24 +473,55 @@ def admin_posts_list():
     contents = Content.filter(Content.type == 'post').all()
     return render_admin('content_list.html', contents=contents, content_type="Posts")
 
-@app.route('/admin/users/profile', methods=['GET'])
+@app.route('/admin/users', methods=['GET'])
 @admin_required
-def admin_profile():
-    return render_admin('user.html')
+def admin_users_list():
+    users = User.filter(User.active == True).all()
+    return render_admin('users_list.html', users=users, content_type="Pages")
 
-@app.route('/admin/users/profile/post', methods=['POST'])
+@app.route('/admin/users/add', methods=['GET'])
 @admin_required
-def admin_profile_post():
-    return_value = success('All profile values have been updated.')
+def admin_users_add():
+    user = User()
+    user.id = ''
+    user.name = ''
+    user.email = ''
+    return render_admin('user.html', user=user)
+
+@app.route('/admin/users/edit/<string:user_id>', methods=['GET'])
+@admin_required
+def admin_users_edit(user_id=''):
+    user = User.get(user_id)
+    return render_admin('user.html', user=user)
+
+@app.route('/admin/users/edit/post', methods=['POST'])
+@admin_required
+def admin_users_edit_post():
     payload = get_payload(request)
+    user_id = payload.get('user_id')
+    if user_id:
+        user = User.get(user_id)
+        return_value = success('All profile values have been updated.')
+    else:
+        user = User()
+        user.admin = True
+        user.active = True
+        user.openid = ''
+        user.insert()
+        return_value = success('User created.')
+        if not payload.get('password'):
+            return jsonify(failure('You must set a password for new users'))
+        if not payload.get('email'):
+            return jsonify(failure('You must set an email for new users'))
+        if not payload.get('name'):
+            return jsonify(failure('You must set a name for new users'))
 
     for key in payload:
         if key == 'password':
-            if payload[key]:
-                hashed_password = generate_password_hash(payload[key])
-                setattr(g.user, key, hashed_password)
-        else:
-            setattr(g.user, key, payload[key])
+            hashed_password = generate_password_hash(payload[key])
+            setattr(user, key, hashed_password)
+        elif key != 'user_id':
+            setattr(user, key, payload[key])
 
     g.user.insert()
     safe_commit()
@@ -558,7 +592,7 @@ def login():
 @app.route('/post_login', methods=['POST'])
 def post_login():
     payload = get_payload(request)
-    user = User.filter(User.email == payload.get('email')).first()
+    user = User.filter(User.active == True).filter(User.email == payload.get('email')).first()
     if user:
         if check_password_hash(user.password, payload['password']):
             session['userid'] = user.id

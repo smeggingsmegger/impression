@@ -3,9 +3,6 @@ import json
 import shlex
 import subprocess
 
-from werkzeug.security import generate_password_hash
-
-# from impression import app
 from impression.mixin import safe_commit
 from impression.models import *
 
@@ -32,11 +29,6 @@ def main():
         print("Stamping with latest Alembic revision: %s" % latest_alembic)
         args = shlex.split("alembic stamp %s" % latest_alembic)
         subprocess.Popen(args, stdout=subprocess.PIPE)
-
-    hashed_password = generate_password_hash('testy21')
-
-    # Create a user to update and delete later.
-    User(name="Test User", email='test@test.com', admin=True, openid='', password=hashed_password).insert()
 
     # Available Themes
     themes = ['Stock Bootstrap 3', 'amelia', 'cerulean', 'cosmo', 'cyborg', 'darkly', 'flatly', 'lumen', 'readable', 'simplex', 'slate', 'spacelab', 'superhero', 'united', 'yeti']

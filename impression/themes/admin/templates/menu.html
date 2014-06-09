@@ -17,7 +17,7 @@
                 <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-user">
-                <li><a href="/admin/users/profile"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                <li><a href="/admin/users/edit/{{ g.user.id }}"><i class="fa fa-user fa-fw"></i> User Profile</a>
                 </li>
                 <li><a href="/admin/settings"><i class="fa fa-gear fa-fw"></i> Settings</a>
                 </li>
@@ -66,6 +66,18 @@
                         </li>
                         <li>
                             <a href="/admin/posts/add">Add Post</a>
+                        </li>
+                    </ul>
+                    <!-- /.nav-second-level -->
+                </li>
+                <li>
+                <a href="#" id="users-a"><i class="fa fa-users fa-fw"></i> Users<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="/admin/users">Edit Users</a>
+                        </li>
+                        <li>
+                            <a href="/admin/users/add">Add User</a>
                         </li>
                     </ul>
                     <!-- /.nav-second-level -->

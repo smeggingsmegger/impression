@@ -10,11 +10,11 @@
 
     <!-- Core CSS - Include with every page -->
     <link href="//netdna.bootstrapcdn.com/bootswatch/3.1.1/cerulean/bootstrap.min.css" rel="stylesheet" />
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" />
     <link href="{{ theme_static('css/bootbar.css') }}" rel="stylesheet" />
     <link href="{{ theme_static('css/fileinput.min.css') }}" rel="stylesheet" />
     <link href="{{ theme_static('css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet" />
     <link href="{{ theme_static('css/bootstrap-tagsinput.css') }}" rel="stylesheet" />
-    <link href="{{ theme_static('font-awesome/css/font-awesome.css') }}" rel="stylesheet" />
 
     <!-- SB Admin CSS - Include with every page -->
     <link href="{{ theme_static('css/sb-admin.css') }}" rel="stylesheet">
@@ -72,10 +72,40 @@
         else if (impression_URL.segments[1] == "files") {
             $("#files-a").trigger("click");
         }
+        else if (impression_URL.segments[1] == "users") {
+            $("#users-a").trigger("click");
+        }
         var focus_field = $('.focus');
         if (focus_field[0]) {
             focus_field[0].focus();
         }
+    });
+
+    // Global AJAX Override
+    jQuery.ajaxSetup({
+        beforeSend: function(xhr, obj) {
+            xhr.setRequestHeader('X-Request', 'JSON');
+        },
+        dataFilter: function(data, dataType) {
+            try {
+                switch (data) {
+                    case '{"messages": ["No valid API Key found."], "success": false}':
+                        // Not logged in.
+                        window.location.replace('/login');
+                        break;
+                    default:
+                        jQuery.parseJSON(data);
+                        return data;
+                }
+            }
+            catch (e) {
+                if (dataType === 'html') {
+                    document.html.set('html', data);
+                } else {
+                    bootbox.alert({title: 'HTML Display', message: data});
+                }
+            }
+        },
     });
     </script>
     {% block javascript %}{% endblock javascript %}
