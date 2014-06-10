@@ -23,7 +23,11 @@ WARNING: THIS IS AN UGLY HACK TO GET AUTO-GENERATION WORKING.
 import sys
 import os
 os.environ['RUNNING_ALEMBIC'] = '1'
-sys.path.append("../impression")
+
+alembic_path = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
+impression_path = os.path.join(alembic_path, os.pardir)
+
+sys.path.append(impression_path)
 
 from impression import db
 from impression.models import *
