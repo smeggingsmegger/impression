@@ -20,7 +20,11 @@ else:
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 app.secret_key = os.urandom(24)
-cache = Cache(app, config={'CACHE_TYPE': 'filesystem', 'CACHE_DIR': 'cache'})
+
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+cache_dir = os.path.abspath(APP_ROOT + '/cache/')
+
+cache = Cache(app, config={'CACHE_TYPE': 'filesystem', 'CACHE_DIR': cache_dir})
 
 Themes(app)
 
