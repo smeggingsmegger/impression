@@ -8,7 +8,7 @@ SERVER_PATH = APP_ROOT
 #############################################
 
 # Database URI
-SQLALCHEMY_DATABASE_URI = 'sqlite://' + os.path.abspath(os.path.join(APP_ROOT, "/impression/", "impression.db"))
+SQLALCHEMY_DATABASE_URI = 'sqlite://' + os.path.abspath(APP_ROOT + "/impression.db")
 
 # Your mail server configuration here.
 MAIL_SERVER = 'smtp.somehost.net'
@@ -22,6 +22,6 @@ DEFAULT_MAIL_SENDER = 'admin@somehost.com'
 DEFAULT_THEME = 'impression'
 
 # File upload settings
-UPLOAD_FOLDER = os.path.join(APP_ROOT, '/uploads/')
+UPLOAD_FOLDER = os.path.abspath(APP_ROOT + '/../uploads/')
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'tiff'])
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024
