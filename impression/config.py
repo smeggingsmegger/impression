@@ -1,6 +1,7 @@
 import os
 # Don't touch this.
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+
 SERVER_PATH = APP_ROOT
 
 #############################################
@@ -8,7 +9,7 @@ SERVER_PATH = APP_ROOT
 #############################################
 
 # Database URI
-SQLALCHEMY_DATABASE_URI = 'sqlite://' + os.path.abspath(APP_ROOT + "/impression.db")
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.abspath(APP_ROOT + "/impression.db")
 
 # Your mail server configuration here.
 MAIL_SERVER = 'smtp.somehost.net'
