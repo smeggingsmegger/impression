@@ -25,7 +25,7 @@ Before we process any request, let's do some things.
 @app.before_request
 def before_request():
     g.user = None
-    g.theme = 'impression'
+    g.theme = get_setting('blog-theme', 'impression')
     g.bootstrap_theme = get_setting('bootstrap-theme', 'yeti')
     g.syntax_highlighting_theme = get_setting('syntax-highlighting-theme', 'monokai.css')
     g.blog_title = get_setting('blog-title', 'Blog Title')
