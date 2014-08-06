@@ -143,8 +143,7 @@ def upload_file(payload, ufile):
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    path = os.path.abspath("./" + app.config['UPLOAD_FOLDER'])
-    return send_from_directory(path, filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/get_tags', methods=['GET'])
 @cache.cached(timeout=CACHE_TIMEOUT)
