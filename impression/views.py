@@ -443,7 +443,7 @@ def admin_pages_edit(content_id):
 @app.route('/admin/pages', methods=['GET'])
 @admin_required
 def admin_pages_list():
-    contents = Content.filter(Content.type == 'page').all()
+    contents = Content.filter(Content.type == 'page').order_by(Content.published_on.desc()).all()
     return render_admin('content_list.html', contents=contents, content_type="Pages")
 
 @app.route('/admin/posts/add', methods=['GET'])
@@ -470,7 +470,7 @@ def admin_posts_edit(content_id):
 @app.route('/admin/posts', methods=['GET'])
 @admin_required
 def admin_posts_list():
-    contents = Content.filter(Content.type == 'post').all()
+    contents = Content.filter(Content.type == 'post').order_by(Content.published_on.desc()).all()
     return render_admin('content_list.html', contents=contents, content_type="Posts")
 
 @app.route('/admin/users', methods=['GET'])
