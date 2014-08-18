@@ -17,6 +17,7 @@ $(function () {
     });
     var editor = ace.edit("body");
     editor.getSession().setUseWrapMode(true);
+    editor.setShowPrintMargin(false);
     editor.setTheme("ace/theme/monokai");
     editor.setOption("spellcheck", true)
     var parser = $("#content-parser option:selected").val();
