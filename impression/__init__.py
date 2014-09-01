@@ -21,6 +21,9 @@ app = Flask(__name__)
 app.config.from_pyfile('config.py')
 app.secret_key = os.urandom(24)
 
+# Remove cache limit from Jinja
+app.jinja_env.cache = {}
+
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 cache_dir = os.path.abspath(APP_ROOT + '/cache/')
 

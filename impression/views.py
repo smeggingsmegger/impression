@@ -35,7 +35,10 @@ def before_request():
 
     if 'userid' in session:
         g.user = User.get(session['userid'])
-        if not g.user.active:
+        try:
+            if not g.user.active:
+                g.user = None
+        except AttributeError:
             g.user = None
 
 '''
