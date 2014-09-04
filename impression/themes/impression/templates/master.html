@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Impression{% block title %}{% endblock title %}</title>
+    <title>{{ g.blog_title }}{% block title %}{% endblock title %}</title>
 
     <!-- Core CSS - Include with every page -->
     {% if g.bootstrap_theme == 'Stock Bootstrap 3' %}
