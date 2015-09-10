@@ -11,6 +11,10 @@ revision = '508568dd8957'
 down_revision = None
 
 import json
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
 
 from alembic import op
 import sqlalchemy as sa
