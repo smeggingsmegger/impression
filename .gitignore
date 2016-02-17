@@ -63,3 +63,6 @@ impression/impression.db
 
 # Uploads
 uploads/*
+
+# Mac crap
+.DS_Store
