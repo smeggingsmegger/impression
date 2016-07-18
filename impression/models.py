@@ -86,7 +86,7 @@ class Content(OurMixin, db.Model):
             content = value
         elif self.parser == 'markdown':
             import markdown
-            content = markdown.markdown(value, extensions=['codehilite', 'fenced_code'])
+            content = markdown.markdown(value, extensions=['markdown.extensions.codehilite', 'markdown.extensions.fenced_code'])
         elif self.parser == 'textile':
             import textile
             content = textile.textile(value)

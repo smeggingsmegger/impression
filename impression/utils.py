@@ -16,7 +16,8 @@ def failure(message=None):
         return {'messages': [], 'success': False}
 
 def chunks(my_list, num_chunks):
-    for index in xrange(0, len(my_list), num_chunks):
+    from builtins import range
+    for index in range(0, len(my_list), num_chunks):
         yield my_list[index:index+num_chunks]+['']*(num_chunks-(len(my_list)-index))
 
 def generate_hash(length=64):
@@ -140,4 +141,3 @@ def uuid():
     @return: String UUID."""
     from uuid import uuid4
     return str(uuid4())
-

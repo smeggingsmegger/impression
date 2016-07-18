@@ -42,7 +42,7 @@ def safe_commit(session=None, close_after=False):
         # database has occurred. For Example, OperationalError for a
         # missing column or invalid column value.
         print(exc)
-    except (StandardError, SQLAlchemyError):
+    except (Exception, SQLAlchemyError):
         session.rollback()
         raise
 

@@ -5,7 +5,7 @@ from datetime import datetime
 from sqlalchemy import or_#, and_
 
 from flask import redirect, request, url_for, g, jsonify, send_from_directory, flash, session
-from flask.ext.themes2 import get_themes_list
+from flask_themes2 import get_themes_list
 from jinja2.exceptions import TemplateNotFound
 
 from impression import app, cache
@@ -614,4 +614,3 @@ def post_login():
         flash("Invalid user")
 
     return redirect(url_for('login'))
-

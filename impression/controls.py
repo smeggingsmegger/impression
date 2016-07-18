@@ -6,7 +6,7 @@ from impression import app, cache
 from impression.models import Setting, ApiKey, Content
 
 from flask import request, redirect, url_for, g, jsonify
-from flask.ext.themes2 import get_theme, render_theme_template
+from flask_themes2 import get_theme, render_theme_template
 
 from itsdangerous import TimestampSigner, SignatureExpired
 

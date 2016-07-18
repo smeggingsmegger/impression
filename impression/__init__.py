@@ -1,8 +1,8 @@
 from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.themes2 import Themes
-from flask.ext.cache import Cache
-# from flask.ext.mail import Mail
+from flask_sqlalchemy import SQLAlchemy
+from flask_themes2 import Themes
+from flask_cache import Cache
+# from flask_mail import Mail
 
 import os
 
