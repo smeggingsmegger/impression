@@ -6,7 +6,7 @@ $(function () {
     });
     elt.tagsinput('input').typeahead({
         prefetch: '/get_tags'
-    }).bind('typeahead:selected', $.proxy(function (obj, datum) {  
+    }).bind('typeahead:selected', $.proxy(function (obj, datum) {
         this.tagsinput('add', datum.value);
         this.tagsinput('input').typeahead('setQuery', '');
     }, elt));
@@ -123,5 +123,11 @@ $(function () {
         e.preventDefault();
         save_content();
     });
+    $(window).keydown(function (e){
+        if ((e.metaKey || e.ctrlKey) && e.keyCode == 83) { /*ctrl+s or command+s*/
+            save_content();
+            e.preventDefault();
+            return false;
+        }
+    });
 });
-

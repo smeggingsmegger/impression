@@ -5,9 +5,11 @@ from random import randrange
 from sys import hexversion
 
 try:
-    from cStringIO import StringIO
+    from StringIO import StringIO
+    CONTENT = "This is a test"
 except ImportError:
-    from io import StringIO
+    from io import BytesIO as StringIO
+    CONTENT = b"This is a test"
 
 from impression import app, db
 
@@ -83,7 +85,7 @@ class impressionTestCase(unittest.TestCase):
             os.unlink(the_file)
 
         post_data = {
-            'file': (StringIO("This is a test file."), filename),
+            'file': (StringIO(CONTENT), filename),
             'name': 'Test File',
             'user_id': self.user.id
         }
