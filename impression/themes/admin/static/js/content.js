@@ -66,6 +66,7 @@ $(function () {
         body = editor.getValue();
         title = $('#title').val();
         content_parser = $('#content-parser').val();
+        theme = $('#theme').val();
         published_on = $('#published-on').val();
         tags = $('#tags').val();
         page_layout = $('#page-layout').val();
@@ -79,6 +80,7 @@ $(function () {
             'user_id': user_id,
             'parser': content_parser,
             'tags': tags,
+            'theme': theme,
             'published': published,
             'menu_item': menu_item,
             'published_on': published_on,

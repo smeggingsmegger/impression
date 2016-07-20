@@ -142,7 +142,9 @@ def admin_required(fnctn):
 This is a special render that allows us to use themes.
 '''
 def render(template, **context):
-    return render_theme_template(get_current_theme(app, g), template, **context)
+    content = context.get('content')
+    theme = content.theme or get_current_theme(app, g)
+    return render_theme_template(theme, template, **context)
 
 '''
 This is a special render that allows us to use themes.

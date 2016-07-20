@@ -81,7 +81,9 @@ def blog_index(page=1, tag=None):
         posts = posts.filter(Content.tags.contains(tag))
 
     posts, max_pages = paginate(posts, page, limit)
-    return render('index.html', user=g.user, posts=posts, current_page=page, max_pages=max_pages, tag_chunks=tag_chunks, tag=tag, menu_items=get_menu_items())
+    return render('index.html', user=g.user, posts=posts, current_page=page,
+                  max_pages=max_pages, tag_chunks=tag_chunks, tag=tag,
+                  menu_items=get_menu_items())
 
 '''
 IMAGE ROUTES
@@ -202,7 +204,8 @@ def render_page(content_id):
     content = Content.get(content_id)
     if not content:
         content = Content.filter(Content.slug == content_id).first()
-    return render(content.template, user=g.user, content=content, menu_items=get_menu_items())
+    return render(content.template, user=g.user,
+                  content=content, menu_items=get_menu_items())
 
 @app.route('/post/<string:content_id>', methods=['GET'])
 @cache.cached(timeout=CACHE_TIMEOUT)
@@ -233,6 +236,7 @@ def create_content():
         content = Content()
 
     content.type = payload.get('type').lower()
+    content.template = '{}.html'.format(content.type)
     content.title = payload.get('title')
     content.body = payload.get('body') or ''
     content.theme = payload.get('theme')
@@ -267,8 +271,8 @@ def create_content():
         content.insert()
         safe_commit()
         return_value['id'] = content.id
-        with app.context():
-            cache.clear()
+        # with app.context():
+        #    cache.clear()
     else:
         return_value = valid
 
