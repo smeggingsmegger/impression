@@ -9,6 +9,7 @@ from flask_themes2 import get_themes_list
 from jinja2.exceptions import TemplateNotFound
 
 from impression import app, cache
+from impression.config import APP_ROOT
 from impression.controls import render, render_admin, admin_required, key_or_admin_required, get_payload, make_slug, get_setting
 from impression.mixin import paginate, results_to_dict, safe_commit
 from impression.models import User, Content, File, Tag, Setting
@@ -233,7 +234,9 @@ def create_content():
 
     content.type = payload.get('type').lower()
     content.title = payload.get('title')
-    content.body = payload.get('body')
+    content.body = payload.get('body') or ''
+    content.theme = payload.get('theme')
+    content.preview = payload.get('preview') or ''
     content.user_id = payload.get('user_id')
     tags = [t.strip() for t in payload.get('tags', '').split(',') if t.strip()]
     for tag in tags:
@@ -260,9 +263,12 @@ def create_content():
 
     valid = content.validate()
     if valid['success'] or editing:
+        print(content.to_dict())
         content.insert()
         safe_commit()
         return_value['id'] = content.id
+        with app.context():
+            cache.clear()
     else:
         return_value = valid
 
@@ -423,6 +429,11 @@ def admin_files_delete():
 
     return jsonify(return_value)
 
+def _get_themes():
+    themes = next(os.walk('{}/themes'.format(APP_ROOT)))[1]
+    themes.remove('admin')
+    return themes
+
 @app.route('/admin/pages/add', methods=['GET'])
 @admin_required
 def admin_pages_add():
@@ -432,16 +443,19 @@ def admin_pages_add():
     content.title = ''
     content.tags = ''
     content.parser = 'markdown'
+    content.theme = g.theme
     content.type = 'page'
     content.user = g.user
     content.user_id = g.user.id
-    return render_admin('content.html', user=g.user, content_type="Page", action="Add", content=content)
+    return render_admin('content.html', user=g.user, content_type="Page",
+                        action="Add", content=content, themes=_get_themes())
 
 @app.route('/admin/pages/edit/<string:content_id>', methods=['GET'])
 @admin_required
 def admin_pages_edit(content_id):
     content = Content.get(content_id)
-    return render_admin('content.html', user=g.user, content_type=content.type, action="Edit", content=content)
+    return render_admin('content.html', user=g.user, content_type=content.type,
+                        action="Edit", content=content, themes=_get_themes())
 
 @app.route('/admin/pages', methods=['GET'])
 @admin_required
@@ -462,13 +476,15 @@ def admin_posts_add():
     content.user = g.user
     content.user_id = g.user.id
 
-    return render_admin('content.html', user=g.user, content_type="Post", action="Add", content=content)
+    return render_admin('content.html', user=g.user, content_type="Post",
+                        action="Add", content=content)
 
 @app.route('/admin/posts/edit/<string:content_id>', methods=['GET'])
 @admin_required
 def admin_posts_edit(content_id):
     content = Content.get(content_id)
-    return render_admin('content.html', user=g.user, content_type=content.type, action="Edit", content=content)
+    return render_admin('content.html', user=g.user, content_type=content.type,
+                        action="Edit", content=content)
 
 @app.route('/admin/posts', methods=['GET'])
 @admin_required

@@ -26,8 +26,10 @@ app.jinja_env.cache = {}
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 cache_dir = os.path.abspath(APP_ROOT + '/cache/')
+cache_type = 'null'
 
-cache = Cache(app, config={'CACHE_TYPE': 'filesystem', 'CACHE_DIR': cache_dir})
+cache = Cache(app, config={'CACHE_TYPE': cache_type})
+# cache = Cache(app, config={'CACHE_TYPE': cache_type, 'CACHE_DIR': cache_dir})
 
 Themes(app)
 

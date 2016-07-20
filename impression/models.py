@@ -51,7 +51,7 @@ class Content(OurMixin, db.Model):
     user = db.relationship("User")
     published = db.Column(db.Boolean(), default=False, server_default='0')
     published_on = db.Column(db.DateTime(), nullable=False, default=datetime.now)
-
+    theme = db.Column(db.VARCHAR(length=256))
 
     def validate(self):
         return_value = success()
@@ -86,7 +86,9 @@ class Content(OurMixin, db.Model):
             content = value
         elif self.parser == 'markdown':
             import markdown
-            content = markdown.markdown(value, extensions=['markdown.extensions.codehilite', 'markdown.extensions.fenced_code'])
+            content = markdown.markdown(value, extensions=['markdown.extensions.codehilite',
+                                                           'markdown.extensions.fenced_code',
+                                                           'markdown.extensions.tables'])
         elif self.parser == 'textile':
             import textile
             content = textile.textile(value)
