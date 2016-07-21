@@ -1,0 +1,6 @@
+{
+  "name": "Impression",
+  "tagline": "Elegant, dead-simple, and powerful CMS/blogging platform based on Flask.",
+  "body": "![Impression](http://scottblevins.net.s3.amazonaws.com/Impression.png)\r\n==========\r\n[![Build Status](https://travis-ci.org/smeggingsmegger/impression.svg?branch=master)](https://travis-ci.org/smeggingsmegger/impression)\r\n\r\nImpression is a Flask-powered blogging engine / CMS that allows you to have the convenience of a CMS with the power of generating static pages and content.\r\n\r\nIn addition to HTML, Impression supports Markdown, Textile, and Wiki markup formats. Write in whatever way makes sense to you and Impression will generate the resulting HTML for you.\r\n\r\nSince Impression is based on Flask, it's easy to get up and running on a web-server. Themes are easy to create and there are several Bootstrap-based styles to choose from right off the bat.\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
