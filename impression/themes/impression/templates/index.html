@@ -9,7 +9,7 @@
                     {% for content in posts %}
                         <!-- blog entry -->
                         <h1><a href="/post/{{ content.slug }}">{{ content.title }}</a></h1>
-                        <p class="lead">by {{ content.user.name }}</p>
+                        <p class="lead">by {{ content.user.firstname }} {{ content.user.lastname }}</p>
                         <hr>
                         <p><span class="glyphicon glyphicon-time"></span> Posted on {{ content.human_published_on() }}</p>
                         <hr>

@@ -13,12 +13,16 @@
                         <form role="form" method="POST" action="/admin/users/edit/post" id="profile-form">
                             <input type="hidden" class="profile" name="user_id" value="{{ user.id }}" />
                             <div class="form-group">
-                                <label for="name">Name</label>
-                                <input class="form-control profile" id="name" name="name" value="{{ user.name }}" />
+                                <label for="name">First Name</label>
+                                <input class="form-control profile" id="firstname" name="firstname" value="{{ user.firstname }}" />
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Last Name</label>
+                                <input class="form-control profile" id="lastname" name="lastname" value="{{ user.lastname }}" />
                             </div>
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input class="form-control profile" id="email" name="email" value="{{ user.email }}" />
+                                <input class="form-control profile" id="username" name="username" value="{{ user.username }}" />
                             </div>
                             <div class="form-group">
                                 <label for="password">Password</label>

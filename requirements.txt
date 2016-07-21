@@ -1,14 +1,42 @@
-alembic
-click
 Flask
-flask-cache
+
+# Flask Extensions
+Flask-Assets
+Flask-Cache
+Flask-DebugToolbar
+Flask-Login
 Flask-SQLAlchemy
+Flask-Script
+Flask-WTF
+Flask-Mail
+Flask-Migrate
+Flask-Permissions
 Flask-Themes2
+
+# Other
 Markdown
-nose
 pillow
 python-creole
 python-dateutil
-simplejson
-SQLAlchemy
 textile
+alembic
+click
+itsdangerous
+cssmin
+jsmin
+Jinja2
+alembic
+blinker
+Mako
+MarkupSafe
+python-editor
+SQLAlchemy
+Werkzeug
+simplejson
+
+# Testing
+# nose
+pytest
+pytest-cov
+mccabe
+flake8

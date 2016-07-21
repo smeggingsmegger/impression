@@ -2,7 +2,6 @@
 import re
 from functools import wraps
 
-from impression import app, cache
 from impression.models import Setting, ApiKey, Content
 
 from flask import request, redirect, url_for, g, jsonify
@@ -14,7 +13,17 @@ from itsdangerous import TimestampSigner, SignatureExpired
 Misc functions that do things like get the current theme and render templates.
 '''
 
-@cache.memoize(timeout=3600)
+
+def get_menu_items():
+    items = []
+    contents = Content.filter(Content.menu_item == True).filter(
+        Content.published == True).all()
+    for content in contents:
+        items.append({'title': content.title, 'slug': content.slug})
+
+    return items
+
+
 def get_setting(name, default):
     setting = Setting.filter(Setting.name == name).first()
     if setting and setting.val is not None and setting.val is not "":
@@ -22,21 +31,26 @@ def get_setting(name, default):
     else:
         return default
 
+
 def make_slug(title, delimiter='-'):
-    slug = delimiter.join([w for w in re.sub('[^\w ]', '', title.replace('-', ' ')).lower().split(' ') if w])
+    slug = delimiter.join([w for w in re.sub(
+        '[^\w ]', '', title.replace('-', ' ')).lower().split(' ') if w])
     count = Content.filter(Content.slug == slug).count()
     slug = slug if count == 0 else "{0}{1}{2}".format(slug, delimiter, count)
     return slug
 
+
 def is_slug(slug):
     return bool(re.search('^[a-z]+-?', slug))
+
 
 def get_current_theme(app, g):
     if g.theme is not None:
         ident = g.theme
     else:
-        ident = app.config.get('DEFAULT_THEME')
+        ident = 'impression'
     return get_theme(ident)
+
 
 def get_settings():
     '''
@@ -48,6 +62,7 @@ def get_settings():
         settings[setting.name.strip()] = setting.val
 
     return settings
+
 
 def get_api_key(request):
     try:
@@ -69,6 +84,7 @@ def get_api_key(request):
 
     return api_key
 
+
 def get_payload(request):
     try:
         payload = request.POST
@@ -80,6 +96,8 @@ def get_payload(request):
 '''
 All decorators below. These handle things like authentication and more.
 '''
+
+
 def key_or_admin_required(fnctn):
     @wraps(fnctn)
     def decorated_function(*args, **kwargs):
@@ -93,6 +111,7 @@ def key_or_admin_required(fnctn):
                 return redirect(url_for('login', next=request.url))
         return fnctn(*args, **kwargs)
     return decorated_function
+
 
 def key_or_login_required(fnctn):
     @wraps(fnctn)
@@ -108,6 +127,7 @@ def key_or_login_required(fnctn):
         return fnctn(*args, **kwargs)
     return decorated_function
 
+
 def key_required(fnctn):
     @wraps(fnctn)
     def decorated_function(*args, **kwargs):
@@ -118,6 +138,7 @@ def key_required(fnctn):
         return fnctn(*args, **kwargs)
     return decorated_function
 
+
 def login_required(fnctn):
     @wraps(fnctn)
     def decorated_function(*args, **kwargs):
@@ -126,6 +147,7 @@ def login_required(fnctn):
             return redirect(url_for('login', next=request.url))
         return fnctn(*args, **kwargs)
     return decorated_function
+
 
 def admin_required(fnctn):
     @wraps(fnctn)
@@ -141,13 +163,21 @@ def admin_required(fnctn):
 '''
 This is a special render that allows us to use themes.
 '''
+
+
 def render(template, **context):
     content = context.get('content')
-    theme = content.theme or get_current_theme(app, g)
+    if content:
+        theme = content.theme or get_current_theme()
+    else:
+        theme = 'impression'
+
     return render_theme_template(theme, template, **context)
 
 '''
 This is a special render that allows us to use themes.
 '''
+
+
 def render_admin(template, **context):
     return render_theme_template(get_theme('admin'), template, **context)

@@ -26,13 +26,13 @@
                                     <a href="#" class="delete"><i id="{{ user.id }}" class="fa fa-trash-o"></i></a>
                                 </td>
                                 <td>
-                                    <a href="/admin/users/edit/{{ user.id }}">{{ user.name }}</a>
+                                    <a href="/admin/users/edit/{{ user.id }}">{{ user.firstname }} {{ user.lastname }}</a>
                                 </td>
                                 <td>
-                                    {{ user.email }}
+                                    {{ user.username }}
                                 </td>
                                 <td>
-                                    {{ user.administrator }}
+                                    {{ user.has_role('admin') }}
                                 </td>
                             </tr>
                             {% endfor %}

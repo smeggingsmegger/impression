@@ -23,6 +23,7 @@ WARNING: THIS IS AN UGLY HACK TO GET AUTO-GENERATION WORKING.
 import sys
 import os
 os.environ['RUNNING_ALEMBIC'] = '1'
+SQLALCHEMY_DATABASE_URI = os.environ.get('IMPRESSION_DB_URI', 'sqlite:///../impression.db')
 
 alembic_path = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 impression_path = os.path.join(alembic_path, os.pardir)
@@ -59,8 +60,7 @@ def run_migrations_offline():
 def run_migrations_online():
     # Override sqlalchemy.url value to application's value
     alembic_config = config.get_section(config.config_ini_section)
-    from impression import config as app_config
-    alembic_config['sqlalchemy.url'] = app_config.SQLALCHEMY_DATABASE_URI
+    alembic_config['sqlalchemy.url'] = SQLALCHEMY_DATABASE_URI
 
     engine = engine_from_config(
                 alembic_config,
@@ -71,6 +71,8 @@ def run_migrations_online():
     context.configure(
                 connection=connection,
                 target_metadata=target_metadata,
+                compare_type=True,
+                render_as_batch=config.get_main_option('sqlalchemy.url').startswith('sqlite:///')
                 )
 
     try:
@@ -83,4 +85,3 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
-

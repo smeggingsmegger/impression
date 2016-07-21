@@ -3,11 +3,13 @@ import simplejson
 import hashlib
 import random
 
+
 def success(message=None):
     if message:
         return {'messages': [message], 'success': True}
     else:
         return {'messages': [], 'success': True}
+
 
 def failure(message=None):
     if message:
@@ -15,33 +17,27 @@ def failure(message=None):
     else:
         return {'messages': [], 'success': False}
 
+
 def chunks(my_list, num_chunks):
-    from builtins import range
-    for index in range(0, len(my_list), num_chunks):
-        yield my_list[index:index+num_chunks]+['']*(num_chunks-(len(my_list)-index))
+    for index in list(range(0, len(my_list), num_chunks)):
+        yield my_list[index:index + num_chunks] + [''] * (num_chunks - (len(my_list) - index))
+
 
 def generate_hash(length=64):
     return hashlib.sha224(str(random.getrandbits(256))).hexdigest()[0:length]
+
 
 def is_sequence(arg):
     return (not hasattr(arg, "strip") and
             hasattr(arg, "__getitem__") or
             hasattr(arg, "__iter__"))
 
+
 def srepr(arg):
     if is_sequence(arg):
         return '<' + ", ".join(srepr(x) for x in arg) + '>'
     return repr(arg)
 
-def place_call(number_or_numbers, message):
-    if not is_sequence(number_or_numbers):
-        number_loop = [number_or_numbers]
-    else:
-        number_loop = number_or_numbers
-
-    # client = TwilioRestClient(app.config['TWILIO_ACCOUNT_SID'], app.config['TWILIO_AUTH_TOKEN'])
-    for number in number_loop:
-        pass
 
 def camelcase_keys(data):
     """
@@ -51,11 +47,13 @@ def camelcase_keys(data):
     return_dict = {}
     for key in data:
         if isinstance(data[key], dict):
-            return_dict[underscore_to_camelcase(key)] = camelcase_keys(data[key])
+            return_dict[underscore_to_camelcase(
+                key)] = camelcase_keys(data[key])
         else:
             return_dict[underscore_to_camelcase(key)] = data[key]
 
     return return_dict
+
 
 def camelcase_to_underscore(name):
     """
@@ -63,6 +61,7 @@ def camelcase_to_underscore(name):
     @param name: The string to convert.
     """
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)).lower()
+
 
 def json_dumps(python_object, dents=None, if_err=None):
     """Takes a value (list, dictionary, etc) that is JSON serializable, and
@@ -123,12 +122,14 @@ def json_loads(json_str, if_err=None):
     except (ValueError, TypeError):
         return simplejson.loads(if_err or '{}')
 
+
 def underscore_to_camelcase(name):
     """
     Converts a string to camelcase. (Typically from underscore.)
     @param name: The string to convert.
     """
     return re.sub(r'_([a-z])', lambda m: (m.group(1).upper()), name)
+
 
 def uuid():
     """Returns a string instance of an universally unique identifier (UUID).
