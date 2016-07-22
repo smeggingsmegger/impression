@@ -80,7 +80,7 @@ def upload_file(payload, ufile):
                          mimetype=ufile.mimetype)
             afile.insert()
             safe_commit()
-        return afile.id
+            return afile.id
     return None
 
 
@@ -95,6 +95,3 @@ def uploaded_file(filename):
 def get_tags():
     tags = [t.name for t in Tag.all()]
     return json.dumps(tags)
-
-
-# @cache.memoize(timeout=CACHE_TIMEOUT)

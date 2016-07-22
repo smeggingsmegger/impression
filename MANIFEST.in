@@ -1,0 +1,6 @@
+recursive-include impression/alembic *
+recursive-include impression/themes *
+recursive-include uploads *
+include alembic.ini
+include runserver.py
+include impression/impression.db

@@ -59,8 +59,9 @@ def create_app(object_name):
     # initialize the cache
     cache.init_app(app)
 
-    # initialize the debug tool bar
-    debug_toolbar.init_app(app)
+    if debug_toolbar:
+        # initialize the debug tool bar
+        debug_toolbar.init_app(app)
 
     # initialize SQLAlchemy
     db.init_app(app)

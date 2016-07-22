@@ -1,0 +1,37 @@
+{% extends theme("master.html") %}
+
+{% block title %} - Setup {{ title }}{% endblock %}
+
+{% block content %}
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Impression</h1>
+                <h3>First-Time Setup</h3>
+                <form role="form" method="POST" action="/setup" id="settings-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input class="form-control" id="email" name="email" value="" placeholder="Admin Email" />
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input class="form-control" id="password" name="password" value="" placeholder="Admin Password" />
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname">First Name</label>
+                        <input class="form-control" id="firstname" name="firstname" value="" placeholder="First Name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname">Last Name</label>
+                        <input class="form-control" id="lastname" name="lastname" value="" placeholder="Last Name" />
+                    </div>
+                    <button type="post" id="save" class="btn btn-success">Save</button>
+                  </form>
+                </form>
+            </div>
+        </div>
+
+{% endblock content %}
+
+{% block javascript %}
+{% endblock javascript %}

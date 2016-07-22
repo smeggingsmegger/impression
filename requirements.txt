@@ -14,28 +14,7 @@ Flask-Themes2
 Flask-WTF
 
 # Other
-alembic
-blinker
 click
-cssmin
-itsdangerous
-Jinja2
-jsmin
-Mako
-Markdown
-MarkupSafe
 pillow
-python-creole
 python-dateutil
-python-editor
 simplejson
-SQLAlchemy
-textile
-Werkzeug
-
-# Testing
-# nose
-pytest
-pytest-cov
-mccabe
-flake8

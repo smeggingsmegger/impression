@@ -18,7 +18,7 @@ class Config(object):
 
 class ProdConfig(Config):
     ENV = 'prod'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///../impression.db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///../impression/impression.db'
 
     CACHE_TYPE = 'simple'
     DEBUG = False
@@ -29,7 +29,7 @@ class DevConfig(Config):
     DEBUG = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
 
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///../impression.db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///../impression/impression.db'
 
     CACHE_TYPE = 'null'
     ASSETS_DEBUG = True

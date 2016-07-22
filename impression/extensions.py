@@ -1,5 +1,10 @@
 from flask_cache import Cache
-from flask_debugtoolbar import DebugToolbarExtension
+try:
+    from flask_debugtoolbar import DebugToolbarExtension
+    debug_toolbar = DebugToolbarExtension()
+except ImportError:
+    debug_toolbar = None
+
 from flask_login import LoginManager
 from flask_assets import Environment
 from flask_themes2 import Themes
@@ -14,8 +19,6 @@ themes2 = Themes()
 
 # init flask assets
 assets_env = Environment()
-
-debug_toolbar = DebugToolbarExtension()
 
 login_manager = LoginManager()
 login_manager.session_protection = "strong"

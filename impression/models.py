@@ -282,7 +282,7 @@ class Content(OurMixin, db.Model):
     id = db.Column(db.VARCHAR(length=36), primary_key=True)
     title = db.Column(db.VARCHAR(length=512))
     type = db.Column(db.Enum('post', 'page'), nullable=False)
-    parser = db.Column(db.Enum('markdown', 'html', 'textile', 'mediawiki'), nullable=False, default='markdown')
+    parser = db.Column(db.Enum('markdown', 'html', 'textile', 'mediawiki', 'rst'), nullable=False, default='markdown')
     url = db.Column(db.VARCHAR(length=256))
     header_image = db.Column(db.VARCHAR(length=256))
     preview = db.Column(db.TEXT())
@@ -331,15 +331,29 @@ class Content(OurMixin, db.Model):
         if self.parser == 'html':
             content = value
         elif self.parser == 'markdown':
-            import markdown
-            content = markdown.markdown(value, extensions=['markdown.extensions.codehilite',
-                                                           'markdown.extensions.fenced_code',
-                                                           'markdown.extensions.tables'])
+            try:
+                import markdown
+                content = markdown.markdown(value, extensions=['markdown.extensions.codehilite',
+                                                               'markdown.extensions.fenced_code',
+                                                               'markdown.extensions.tables'])
+            except ImportError:
+                content = value
+                print('Markdown parser not installed. Try `pip install Markdown`')
+
         elif self.parser == 'textile':
-            import textile
-            content = textile.textile(value)
+            try:
+                import textile
+                content = textile.textile(value)
+            except ImportError:
+                content = value
+                print('Markdown parser not installed. Try `pip install textile`')
+
         elif self.parser == 'mediawiki':
-            from creole import creole2html
-            content = creole2html(unicode(value))
+            try:
+                from creole import creole2html
+                content = creole2html(unicode(value))
+            except ImportError:
+                content = value
+                print('Markdown parser not installed. Try `pip install python-creole`')
 
         return content

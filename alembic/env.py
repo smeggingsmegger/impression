@@ -23,7 +23,7 @@ WARNING: THIS IS AN UGLY HACK TO GET AUTO-GENERATION WORKING.
 import sys
 import os
 os.environ['RUNNING_ALEMBIC'] = '1'
-SQLALCHEMY_DATABASE_URI = os.environ.get('IMPRESSION_DB_URI', 'sqlite:///../impression.db')
+SQLALCHEMY_DATABASE_URI = os.environ.get('IMPRESSION_DB_URI', 'sqlite:///../impression/impression.db')
 
 alembic_path = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 impression_path = os.path.join(alembic_path, os.pardir)
