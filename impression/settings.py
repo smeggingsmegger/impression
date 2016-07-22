@@ -3,7 +3,7 @@ import tempfile
 
 db_file = tempfile.NamedTemporaryFile()
 
-# APP_ROOT = os.path.dirname(os.path.abspath(__file__))  # Don't touch this.
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))  # Don't touch this.
 
 
 class Config(object):
@@ -18,7 +18,7 @@ class Config(object):
 
 class ProdConfig(Config):
     ENV = 'prod'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///../impression/impression.db'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('IMPRESSION_DB_URI', 'sqlite:///{}impression.db'.format(APP_ROOT))
 
     CACHE_TYPE = 'simple'
     DEBUG = False
