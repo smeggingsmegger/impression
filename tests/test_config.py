@@ -10,7 +10,7 @@ class TestConfig:
         app = create_app('impression.settings.DevConfig')
 
         assert app.config['DEBUG'] is True
-        assert app.config['SQLALCHEMY_DATABASE_URI'] == 'sqlite:///../impression.db'
+        assert app.config['SQLALCHEMY_DATABASE_URI'] == 'sqlite:///../impression/impression.db'
         assert app.config['CACHE_TYPE'] == 'null'
 
     def test_test_config(self):
@@ -27,5 +27,5 @@ class TestConfig:
 
         app = create_app('impression.settings.ProdConfig')
 
-        assert app.config['SQLALCHEMY_DATABASE_URI'] == 'sqlite:///../impression.db'
+        assert app.config['SQLALCHEMY_DATABASE_URI'] == 'sqlite:///../impression/impression.db'
         assert app.config['CACHE_TYPE'] == 'simple'
