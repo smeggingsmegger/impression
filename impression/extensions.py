@@ -6,7 +6,12 @@ except ImportError:
     debug_toolbar = None
 
 from flask_login import LoginManager
-from flask_assets import Environment
+try:
+    from flask_assets import Environment
+    # init flask assets
+    assets_env = Environment()
+except ImportError:
+    assets_env = None
 from flask_themes2 import Themes
 
 from impression.models import User
@@ -16,9 +21,6 @@ cache = Cache()
 
 # Setup themes2
 themes2 = Themes()
-
-# init flask assets
-assets_env = Environment()
 
 login_manager = LoginManager()
 login_manager.session_protection = "strong"

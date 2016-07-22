@@ -6,7 +6,10 @@ __email__ = 'scott@britecore.com'
 __version__ = '1.0'
 
 from flask import Flask, g
-from webassets.loaders import PythonLoader as PythonAssetsLoader
+try:
+    from webassets.loaders import PythonLoader as PythonAssetsLoader
+except ImportError:
+    pass
 
 from impression.controllers.main import main_controller
 from impression.controllers.admin import admin_controller
@@ -69,10 +72,11 @@ def create_app(object_name):
     login_manager.init_app(app)
 
     # Import and register the different asset bundles
-    assets_env.init_app(app)
-    assets_loader = PythonAssetsLoader(assets)
-    for name, bundle in assets_loader.load_bundles().items():
-        assets_env.register(name, bundle)
+    if assets_env:
+        assets_env.init_app(app)
+        assets_loader = PythonAssetsLoader(assets)
+        for name, bundle in assets_loader.load_bundles().items():
+            assets_env.register(name, bundle)
 
     # register our blueprints
     main_controller.before_request(before_app_request)
