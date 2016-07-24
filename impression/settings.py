@@ -18,7 +18,7 @@ class Config(object):
 
 class ProdConfig(Config):
     ENV = 'prod'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('IMPRESSION_DB_URI', 'sqlite:///{}impression.db'.format(APP_ROOT))
+    SQLALCHEMY_DATABASE_URI = os.environ.get('IMPRESSION_DB_URI', 'sqlite:///{}/impression.db'.format(APP_ROOT))
 
     CACHE_TYPE = 'simple'
     DEBUG = False

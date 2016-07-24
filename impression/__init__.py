@@ -32,11 +32,7 @@ from impression.extensions import (
 
 def before_app_request():
     g.user = None
-    g.theme = get_setting('blog-theme', 'impression')
-    g.bootstrap_theme = get_setting('bootstrap-theme', 'yeti')
-    g.syntax_highlighting_theme = get_setting('syntax-highlighting-theme', 'monokai.css')
-    g.blog_title = get_setting('blog-title', 'Blog Title')
-    g.blog_copyright = get_setting('blog-copyright', 'Blog Copyright')
+    # g.theme =
     g.upload_directory = get_setting('upload-directory', 'uploads/')
     g.allowed_extensions = get_setting('allowed-extensions', ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'tiff'])
     g.max_file_size = get_setting('max-file-size', 16777216)  # 16 MB

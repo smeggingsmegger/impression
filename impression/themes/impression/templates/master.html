@@ -7,16 +7,17 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>{{ g.blog_title }}{% block title %}{% endblock title %}</title>
+    <title>{{ blog_title }}{% block title %}{% endblock title %}</title>
 
     <!-- Core CSS - Include with every page -->
-    {% if g.bootstrap_theme == 'Stock Bootstrap 3' %}
-        <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" />
+    {% if bootstrap_theme == 'Stock Bootstrap 3' %}
+        <link href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" />
     {% else %}
-        <link href="//netdna.bootstrapcdn.com/bootswatch/3.1.1/{{ g.bootstrap_theme }}/bootstrap.min.css" rel="stylesheet" />
+        <link href="https://netdna.bootstrapcdn.com/bootswatch/3.1.1/{{ bootstrap_theme }}/bootstrap.min.css" rel="stylesheet" />
     {% endif %}
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="{{ theme_static('css/pygments/') }}{{ g.syntax_highlighting_theme }}" rel="stylesheet" />
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="{{ theme_static('css/pygments/') }}{{ syntax_highlighting_theme }}" rel="stylesheet" />
+
     <link href="{{ theme_static('font-awesome/css/font-awesome.css') }}" rel="stylesheet" />
 
     <!-- Add custom CSS here -->
@@ -37,7 +38,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">{{ g.blog_title }}</a>
+                <a class="navbar-brand" href="/">{{ blog_title }}</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -54,16 +55,18 @@
     </nav>
 
     <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        <div id='alerts'>
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
-                <a class="close" data-dismiss="alert" href="#">x</a>
-                {{ message|safe }}
-            </div>
-            {% endfor %}
-        </div>
-        {% endwith %}
+        {% if not freeze %}
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          <div id='alerts'>
+              {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">
+                  <a class="close" data-dismiss="alert" href="#">x</a>
+                  {{ message|safe }}
+              </div>
+              {% endfor %}
+          </div>
+          {% endwith %}
+        {% endif %}
 
     {% block content %}{% endblock content %}
         <hr>
@@ -71,7 +74,7 @@
         <footer>
             <div class="row">
                 <div class="col-lg-12">
-                    <p>&copy; {{ g.blog_copyright }} 2016</p>
+                    <p>&copy; {{ blog_copyright }}</p>
                 </div>
             </div>
         </footer>

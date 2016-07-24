@@ -5,7 +5,7 @@ from functools import wraps
 from impression.models import Setting, ApiKey, Content
 
 from flask import request, redirect, url_for, g, jsonify
-from flask_themes2 import get_theme, render_theme_template
+from flask_themes2 import get_theme, render_theme_template, global_theme_static, static
 
 from itsdangerous import TimestampSigner, SignatureExpired
 
@@ -44,11 +44,8 @@ def is_slug(slug):
     return bool(re.search('^[a-z]+-?', slug))
 
 
-def get_current_theme(app, g):
-    if g.theme is not None:
-        ident = g.theme
-    else:
-        ident = 'impression'
+def get_current_theme():
+    ident = get_setting('blog-theme', 'impression')
     return get_theme(ident)
 
 
@@ -166,6 +163,11 @@ This is a special render that allows us to use themes.
 
 
 def render(template, **context):
+    context['bootstrap_theme'] = context.get('bootstrap_theme', get_setting('bootstrap-theme', 'yeti'))
+    context['syntax_highlighting_theme'] = context.get('syntax_highlighting_theme', get_setting('syntax-highlighting-theme', 'monokai.css'))
+    context['blog_title'] = context.get('blog_title', get_setting('blog-title', 'Blog Title'))
+    context['blog_copyright'] = context.get('blog_copyright', get_setting('blog-copyright', 'Blog Copyright'))
+    context['freeze'] = context.get('freeze')
     content = context.get('content')
     if content:
         theme = content.theme or get_current_theme()
@@ -180,4 +182,9 @@ This is a special render that allows us to use themes.
 
 
 def render_admin(template, **context):
+    context['bootstrap_theme'] = context.get('bootstrap_theme', get_setting('bootstrap-theme', 'yeti'))
+    context['syntax_highlighting_theme'] = context.get('syntax_highlighting_theme', get_setting('syntax-highlighting-theme', 'monokai.css'))
+    context['blog_title'] = context.get('blog_title', get_setting('blog-title', 'Blog Title'))
+    context['blog_copyright'] = context.get('blog_copyright', get_setting('blog-copyright', 'Blog Copyright'))
+    context['freeze'] = context.get('freeze')
     return render_theme_template(get_theme('admin'), template, **context)
