@@ -64,7 +64,7 @@ impression/impression.db
 
 # Uploads
 uploads/*
-frozen/*.html
+frozen/*
 
 # Mac crap
 .DS_Store
