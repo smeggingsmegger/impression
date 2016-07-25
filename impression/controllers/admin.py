@@ -11,11 +11,15 @@ from flask_themes2 import get_themes_list
 
 from impression.decorators import user_is, user_has
 from impression.utils import failure, success
-from impression.extensions import cache
 from impression.forms import LoginForm
 from impression.models import Content, File, Setting, Tag, User
 from impression.controls import get_payload, render_admin, make_slug
 from impression.mixin import safe_commit
+
+try:
+    from impression.extensions import cache
+except ImportError:
+    pass
 
 
 admin_controller = Blueprint('admin_controller', __name__)

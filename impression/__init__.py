@@ -55,8 +55,9 @@ def create_app(object_name):
 
     app.config.from_object(object_name)
 
-    # initialize the cache
-    cache.init_app(app)
+    if cache:
+        # initialize the cache
+        cache.init_app(app)
 
     if debug_toolbar:
         # initialize the debug tool bar

@@ -1,27 +1,30 @@
-from flask_cache import Cache
+from impression.models import User
+
+try:
+    from flask_cache import Cache
+    # Setup flask cache
+    cache = Cache()
+except ImportError:
+    cache = None
+
 try:
     from flask_debugtoolbar import DebugToolbarExtension
     debug_toolbar = DebugToolbarExtension()
 except ImportError:
     debug_toolbar = None
 
-from flask_login import LoginManager
 try:
     from flask_assets import Environment
     # init flask assets
     assets_env = Environment()
 except ImportError:
     assets_env = None
+
 from flask_themes2 import Themes
-
-from impression.models import User
-
-# Setup flask cache
-cache = Cache()
-
 # Setup themes2
 themes2 = Themes()
 
+from flask_login import LoginManager
 login_manager = LoginManager()
 login_manager.session_protection = "strong"
 login_manager.login_view = "main_controller.login"

@@ -11,10 +11,13 @@ from impression.decorators import user_is, user_has, import_user
 from impression.controls import (get_payload, render, get_setting, get_menu_items,
                                  render_admin)
 from impression.utils import success, chunks
-from impression.extensions import cache
 from impression.forms import LoginForm
 from impression.models import Role, Setting, User, Content
 from impression.mixin import safe_commit, paginate, results_to_dict
+try:
+    from impression.extensions import cache
+except ImportError:
+    pass
 
 main_controller = Blueprint('main_controller', __name__)
 
