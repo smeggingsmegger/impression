@@ -18,10 +18,17 @@ $(function () {
     var editor = ace.edit("body");
     editor.getSession().setUseWrapMode(true);
     editor.setShowPrintMargin(false);
-    editor.setTheme("ace/theme/monokai");
     editor.setOption("spellcheck", true)
     var parser = $("#content-parser option:selected").val();
 
+    switch (parser) {
+      case 'markdown':
+        editor.setTheme("ace/theme/twilight");
+        break;
+      default:
+        editor.setTheme("ace/theme/monokai");
+        break;
+    }
     if (parser === "mediawiki") {
         editor.getSession().setMode("ace/mode/text");
     }
@@ -31,7 +38,7 @@ $(function () {
 
     $("#help").click(function(e) {
         e.preventDefault();
-        var parser = $("content-parser").val();
+        var parser = $("#content-parser").val();
         var url = "http://daringfireball.net/projects/markdown/syntax";
         if (parser === "textile") {
             url = "http://redcloth.org/hobix.com/textile/quick.html";
@@ -55,6 +62,14 @@ $(function () {
     $("#content-parser").change(function() {
         var optionSelected = $("option:selected", this);
         var valueSelected = this.value;
+        switch (valueSelected) {
+          case 'markdown':
+            editor.setTheme("ace/theme/twilight");
+            break;
+          default:
+            editor.setTheme("ace/theme/monokai");
+            break;
+        }
         if (valueSelected !== "mediawiki") {
             editor.getSession().setMode("ace/mode/" + valueSelected);
         }
@@ -124,6 +139,13 @@ $(function () {
     $("#save").click(function(e) {
         e.preventDefault();
         save_content();
+    });
+    $("#media").click(function(e) {
+        e.preventDefault();
+        bootbox.dialog({
+          title: "Select Image",
+          message: '<img src="/uploads/googlelogo_color_272x92dp_thumbnail.png" width="128px" image="/uploads/googlelogo_color_272x92dp.png" />'
+        });
     });
     $(window).keydown(function (e){
         if ((e.metaKey || e.ctrlKey) && e.keyCode == 83) { /*ctrl+s or command+s*/

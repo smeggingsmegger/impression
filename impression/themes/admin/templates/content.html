@@ -30,16 +30,6 @@
                                     <label for="published-on">Published Date</label>
                                     <input class="form-control" id="published-on" name="published_on" value="{{ content.human_published_on() }}" />
                                 </div>
-                                <div class="col-xs-2" style="padding-top: 10px;">
-                                    <div class="checkbox">
-                                        <label for="published">Published</label>
-                                        <input id="published" type="checkbox" value="1"{% if content.published %} checked="checked"{% endif %} />
-                                    </div>
-                                    <div class="checkbox">
-                                        <label for="menu-item">Menu Item</label>
-                                        <input id="menu-item" type="checkbox" value="1"{% if content.menu_item %} checked="checked"{% endif %} />
-                                    </div>
-                                </div>
                                 <div class="col-xs-2{% if content.type == 'post' %} hidden{% endif %}">
                                     <label for="content-parser">Theme</label>
                                     <select class="form-control" id="theme" name="theme">
@@ -47,6 +37,22 @@
                                         <option value="{{ theme }}"{% if content.theme == theme %} selected{% endif %}>{{ theme.capitalize() }}</option>
                                         {% endfor %}
                                     </select>
+                                </div>
+                                <div class="col-xs-2">
+                                    <div class="checkbox">
+                                      <br / />
+                                      <label>
+                                        <input id="published" type="checkbox" value="1"{% if content.published %} checked="checked"{% endif %} /> Published
+                                      </label>
+                                    </div>
+                                </div>
+                                <div class="col-xs-2">
+                                    <div class="checkbox">
+                                      <br / />
+                                      <label>
+                                        <input id="menu-item" type="checkbox" value="1"{% if content.menu_item %} checked="checked"{% endif %} /> Menu Item
+                                      </label>
+                                    </div>
                                 </div>
                             </div>
 
@@ -59,9 +65,10 @@
 
                             <div class="form-group row">
                                 <div class="col-xs-3">
-                                  <button id="save" class="btn btn-success">Save</button>
-                                  <button id="preview" class="btn btn-primary">Preview</button>
-                                  <button id="help" class="btn btn-default">Help</button>
+                                  <button id="save" class="btn btn-success"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                                  <button id="preview" class="btn btn-primary"><i class="fa fa-eye" aria-hidden="true"></i></button>
+                                  <!-- <button id="media" class="btn btn-info"><i class="fa fa-picture-o" aria-hidden="true"></i></button> -->
+                                  <button id="help" class="btn btn-default"><i class="fa fa-question-circle" aria-hidden="true"></i></button>
                                 </div>
                                 <div class="col-xl-4">
                                   <div id="tags-div" class="form-group{% if content.type == 'page' %} hidden{% endif %} pull-right">
@@ -88,12 +95,13 @@
 {% endblock content %}
 
 {% block javascript %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-textile.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/theme-monokai.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-text.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-markdown.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-html.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ext-spellcheck.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/mode-textile.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/theme-monokai.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/theme-twilight.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/mode-markdown.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/mode-html.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ext-spellcheck.js"></script>
+<script src="{{ theme_static('js/image-picker.min.js') }}"></script>
 <script src="{{ theme_static('js/content.js') }}"></script>
 {% endblock javascript %}

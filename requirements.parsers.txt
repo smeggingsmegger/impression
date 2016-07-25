@@ -2,3 +2,6 @@
 textile
 python-creole
 Markdown
+
+# Code formatting
+pygments

@@ -9,10 +9,11 @@
     <title>Impression{% block title %}{% endblock title %}</title>
 
     <!-- Core CSS - Include with every page -->
-    <link href="//netdna.bootstrapcdn.com/bootswatch/3.1.1/cerulean/bootstrap.min.css" rel="stylesheet" />
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="//netdna.bootstrapcdn.com/bootswatch/3.3.6/cerulean/bootstrap.min.css" rel="stylesheet" />
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" />
     <link href="{{ theme_static('css/bootbar.css') }}" rel="stylesheet" />
     <link href="{{ theme_static('css/fileinput.min.css') }}" rel="stylesheet" />
+    <link href="{{ theme_static('css/image-picker.css') }}" rel="stylesheet" />
     <link href="{{ theme_static('css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet" />
     <link href="{{ theme_static('css/bootstrap-tagsinput.css') }}" rel="stylesheet" />
 
@@ -44,7 +45,9 @@
         </div>
     </div>
     <!-- Core Scripts - Include with every page -->
-    <script src="{{ theme_static('js/jquery-1.11.0.min.js') }}"></script>
+    <!-- <script src="{{ theme_static('js/jquery-1.11.0.min.js') }}"></script> -->
+    <script src="{{ theme_static('js/jquery-3.1.0.min.js') }}"></script>
+    <!-- <script src="{{ theme_static('js/jquery-migrate-1.4.1.min.js') }}"></script> -->
     <script src="{{ theme_static('js/bootstrap.min.js') }}"></script>
     <script src="{{ theme_static('js/bootbar.min.js') }}"></script>
     <script src="{{ theme_static('js/bootbox.min.js') }}"></script>

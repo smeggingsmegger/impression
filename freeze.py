@@ -19,7 +19,8 @@ def get_theme_dirs():
     for file in os.listdir('impression/themes/'):
         if file != 'admin':
             path = os.path.abspath(os.path.join('impression/themes/', file))
-            theme_dirs.append((file, path))
+            if os.path.isdir(path):
+                theme_dirs.append((file, path))
     return theme_dirs
 
 
@@ -47,6 +48,9 @@ def main():
     for theme_dir in theme_dirs:
         dest = os.path.join(FROZEN_DIR, theme_dir[0])
         shutil.copytree(theme_dir[1], dest)
+
+    # Copy Uploads
+    shutil.copytree(os.path.abspath('uploads/'), os.path.abspath(os.path.join(FROZEN_DIR, 'uploads/')))
 
     # Render all the templates
     with app.app_context():

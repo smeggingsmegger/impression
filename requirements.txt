@@ -2,10 +2,7 @@ Flask
 
 # Flask Extensions
 Flask-Assets
-Flask-Cache
-Flask-DebugToolbar
 Flask-Login
-Flask-Mail
 Flask-Migrate
 Flask-Permissions
 Flask-Script

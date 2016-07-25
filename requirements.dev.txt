@@ -1,0 +1,6 @@
+# Debugging stuffs.
+Flask-DebugToolbar
+ipython
+ptpython
+ptpdb
+pudb
