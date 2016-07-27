@@ -18,6 +18,10 @@ def failure(message=None):
         return {'messages': [], 'success': False}
 
 
+def filter_results(results, prop, value):
+    return [o for o in results if getattr(o, prop) == value]
+
+
 def chunks(my_list, num_chunks):
     for index in list(range(0, len(my_list), num_chunks)):
         yield my_list[index:index + num_chunks] + [''] * (num_chunks - (len(my_list) - index))

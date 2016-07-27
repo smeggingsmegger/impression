@@ -12,6 +12,7 @@ from impression.controls import (get_payload, render, get_setting, get_menu_item
                                  render_admin)
 from impression.utils import success, chunks
 from impression.forms import LoginForm
+from impression.upgrade import upgrade
 from impression.models import Role, Setting, User, Content
 from impression.mixin import safe_commit, paginate, results_to_dict
 try:
@@ -210,12 +211,7 @@ def setup():
                 args = shlex.split("alembic stamp %s" % latest_alembic)
                 subprocess.Popen(args, stdout=subprocess.PIPE)
 
-            # Available Themes
-            themes = ['Stock Bootstrap 3', 'cerulean', 'cosmo', 'cyborg', 'darkly', 'flatly', 'journal',
-                      'lumen', 'readable', 'sandstone', 'simplex', 'slate', 'spacelab', 'superhero', 'united', 'yeti']
-            syntax_themes = ['autumn.css', 'borland.css', 'bw.css', 'colorful.css', 'default.css', 'emacs.css', 'friendly.css', 'fruity.css', 'github.css',
-                             'manni.css', 'monokai.css', 'murphy.css', 'native.css', 'pastie.css', 'perldoc.css', 'tango.css', 'trac.css', 'vim.css', 'vs.css', 'zenburn.css']
-
+            from impression.upgrade import THEMES, SYNTAX_THEMES
             # Create some system settings
             Setting(name='blog-title', vartype='str', system=True).insert()
             Setting(name='blog-copyright', vartype='str', system=True).insert()
@@ -224,9 +220,9 @@ def setup():
             Setting(name='posts-per-page', vartype='int',
                     system=True, value=4).insert()
             Setting(name='bootstrap-theme', vartype='str', system=True,
-                    value='sandstone', allowed=json.dumps(themes)).insert()
+                    value='sandstone', allowed=json.dumps(THEMES)).insert()
             Setting(name='syntax-highlighting-theme', vartype='str', system=True,
-                    value='monokai.css', allowed=json.dumps(syntax_themes)).insert()
+                    value='monokai.css', allowed=json.dumps(SYNTAX_THEMES)).insert()
             Setting(name='custom-front-page',
                     vartype='str', system=True).insert()
             Setting(name='allowed-extensions', vartype='list', system=True,

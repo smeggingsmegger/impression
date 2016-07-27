@@ -24,6 +24,9 @@ deps:
 clean:
 	python manage.py clean
 
+clean:
+	python manage.py upgrade
+
 data:
 	python manage.py dropdb
 	python manage.py createdb
@@ -45,7 +48,7 @@ pypi:
 	pandoc --from=markdown --to=rst --output=README.rst README.md
 	make source
 	make upload
-	
+
 delpyc:
 	find . -name '*.pyc' -delete
 

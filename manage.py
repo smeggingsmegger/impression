@@ -114,6 +114,16 @@ def sample_data():
     db.session.add(my_role)
     db.session.commit()
 
+
+@manager.command
+def upgrade():
+    """
+    Upgrades the DB
+    """
+    from impression.upgrade import upgrade
+    upgrade()
+
+
 manager.add_command("server", Server())
 manager.add_command("show-urls", ShowUrls())
 manager.add_command("clean", Clean())
